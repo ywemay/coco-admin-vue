@@ -10,7 +10,7 @@ Container load business administration.
 
 ```bash
 # clone the project
-git clone https://github.com/ywemay/coco-admin-vue
+git clone https://github.com/ywemay/coco-admin-vue.git
 
 # enter the project directory
 cd coco-admin-vue
