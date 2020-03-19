@@ -2,38 +2,38 @@ import request from '@/utils/request'
 
 export function getList(params) {
   return request({
-    url: '/orders',
+    url: '/clorders',
     method: 'get',
     params
   })
 }
 
-export function getOrder(id) {
+export function getItem(id) {
   return request({
-    url: '/orders/' + id,
+    url: '/clorders/' + id,
     method: 'get'
   })
 }
 
-export function createOrder(data) {
+export function createItem(data) {
   return request({
-    url: '/orders',
+    url: '/clorders',
     method: 'post',
     data
   })
 }
 
-export function updateOrder(id, data) {
+export function updateItem(id, data) {
   return request({
-    url: '/orders/' + id,
+    url: '/clorders/' + id,
     method: 'put',
     data
   })
 }
 
-export function deleteOrder(id) {
+export function deleteItem(id) {
   return request({
-    url: '/orders/' + id,
-    method: 'delete'
+    url: '/clorders/' + id,
+    methos: 'delete'
   })
 }

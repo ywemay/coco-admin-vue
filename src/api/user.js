@@ -23,7 +23,7 @@ export function logout() {
   })
 }
 
-export function getUsers(params) {
+export function getList(params) {
   return request({
     url: '/users',
     method: 'get',

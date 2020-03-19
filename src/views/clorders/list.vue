@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="cl-orders-container">
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -15,34 +15,28 @@
       </el-table-column>
       <el-table-column align="center" label="Date">
         <template slot-scope="scope">
-          {{ scope.row.plainStartDateTime }}
+          {{ scope.row.plainCreatedAt }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="Customer">
         <template slot-scope="scope">
-          {{ scope.row.company ? scope.row.company.name : '' }}
+          {{ scope.row.assignedTo.username }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Container Type">
+      <el-table-column align="center" label="Company">
         <template slot-scope="scope">
-          {{ scope.row.containerType }}
+          {{ scope.row.saleOrder.company.name }}
         </template>
       </el-table-column>
-      <el-table-column align="center" label="Price">
+      <el-table-column align="center" label="Start At">
         <template slot-scope="scope">
-          {{ scope.row.price }}
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Work">
-        <template slot-scope="scope">
-          {{ scope.row.containerLoadOrder }}
+          {{ scope.row.saleOrder.plainStartDateTime }}
         </template>
       </el-table-column>
 
       <el-table-column align="center" label="Actions" width="120">
         <template slot-scope="scope">
-          <router-link :to="'/sale/edit/'+scope.row.id">
+          <router-link :to="'/clorders/edit/'+scope.row.id">
             <el-button type="primary" size="small" icon="el-icon-edit">
               Edit
             </el-button>
@@ -62,7 +56,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/saleorders'
+import { getList } from '@/api/clorders'
 
 export default {
   filters: {
@@ -79,7 +73,7 @@ export default {
     return {
       list: null,
       totalItems: 0,
-      listLoadin: true,
+      listLoading: false,
       pageSize: 30,
       currentPage: 1
     }

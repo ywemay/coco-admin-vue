@@ -93,7 +93,7 @@ export const constantRoutes = [
         path: 'create',
         name: 'CreateUser',
         component: () => import('@/views/user/create'),
-        meta: { title: 'Create User', icon: 'edit' }
+        meta: { title: 'Create User', icon: 'form' }
       },
       {
         path: 'edit/:id(\\d+)',
@@ -105,31 +105,31 @@ export const constantRoutes = [
       {
         path: 'list',
         name: 'UsersList',
-        component: () => import('@/views/saleorders/list'),
+        component: () => import('@/views/user/list'),
         meta: { title: 'User List', icon: 'table' }
       }
     ]
   },
 
-  // Product
+  // Container load orders
   {
-    path: '/products',
+    path: '/clorders',
     component: Layout,
-    redirect: '/products/gallery',
-    name: 'Products',
-    meta: { title: 'Products', icon: 'table' },
+    redirect: '/clorders/list',
+    name: 'Container Load Orders',
+    meta: { title: 'Container Load Orders', icon: 'ctnrload' },
     children: [
       {
-        path: 'gallery',
-        name: 'ProductList',
-        component: () => import('@/views/product/list'),
-        meta: { title: 'Product List', icon: 'table' }
+        path: 'list',
+        name: 'CLOrders',
+        component: () => import('@/views/clorders/list'),
+        meta: { title: 'Container Load Orders', icon: 'ctnrload' }
       },
       {
         path: 'create',
-        name: 'CreateProduct',
-        component: () => import('@/views/product/create'),
-        meta: { title: 'Create Product', icon: 'edit' }
+        name: 'CreateCLOrder',
+        component: () => import('@/views/clorders/create'),
+        meta: { title: 'Create Container Load Order', icon: 'form' }
       }
     ]
   },

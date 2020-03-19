@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { getSaleOrder } from '@/api/saleorders'
+import { getOrder } from '@/api/saleorders'
 import UserDinamicField from '@/views/user/components/UserDinamicField'
 
 export default {
@@ -51,7 +51,7 @@ export default {
     loadData() {
       if (this.isEdit) {
         const saleOrder = this
-        getSaleOrder(this.$route.params.id).then(response => {
+        getOrder(this.$route.params.id).then(response => {
           if (response.status === 200) {
             saleOrder.customer = response.data.customer
             this.form.id = response.data.id
