@@ -8,37 +8,77 @@
       @submit.prevent
     >
       <el-form-item prop="username">
-        <el-input v-model="postForm.username" placeholder="User Name" prefix-icon="el-icon-user" />
+        <el-input
+          v-model="postForm.username"
+          prefix-icon="el-icon-user"
+          :placeholder="$t('user.username')"
+        />
       </el-form-item>
       <el-form-item prop="password">
         <el-input
           v-model="postForm.password"
           type="password"
-          placeholder="Password"
           prefix-icon="el-icon-lock"
+          :placeholder="$t('user.password')"
         />
       </el-form-item>
       <el-form-item prop="passwordRepeat">
         <el-input
           v-model="postForm.passwordRepeat"
           type="password"
-          placeholder="Password repeat"
           prefix-icon="el-icon-lock"
+          :placeholder="$t('user.passwordRepeat')"
         />
       </el-form-item>
-      <el-button v-loading="loading" type="success" @click="submitForm('postForm')">Save</el-button>
-      <div>UserId: {{ userId }}</div>
+      <el-form-item prop="phone">
+        <el-input
+          v-model="postForm.phone"
+          prefix-icon="el-icon-mobile"
+          :placeholder="$t('user.phone')"
+          />
+      </el-form-item>
+      <el-form-item prop="roles" :label="$t('user.roles')">
+        <el-checkbox-group v-model="postForm.roles">
+         <el-checkbox label="admin">{{ $t('user.admin') }}</el-checkbox>
+         <el-checkbox label="customer"> {{ $t('user.customer') }}</el-checkbox>
+         <el-checkbox label="teamleader">{{ $t('user.teamleader') }}</el-checkbox>
+         <el-checkbox label="worker">{{ $t('user.worker') }}</el-checkbox>
+        </el-checkbox-group>
+      </el-form-item>
+      <div class="company-related-data" v-if="postForm.roles.find(checkIsCustomer)">
+        <el-form-item prop="company.name">
+          <el-input
+            v-model="postForm.company.name"
+            prefix-icon="el-icon-office-building"
+            :placeholder="$t('company.name')"
+            />
+         </el-form-item>
+        <el-form-item prop="company.email">
+          <el-input
+            v-model="postForm.company.email"
+            prefix-icon="el-icon-message"
+            :placeholder="$t('company.email')"
+            />
+        </el-form-item>
+      </div>
+      <el-button v-loading="loading" type="success" @click="submitForm('postForm')">
+        {{ $t('button.save') }}
+      </el-button>
     </el-form>
   </div>
 </template>
 
 <script>
 import { getUser } from '@/api/user'
+import locale from '@/lang/zh.js'
 
 const defaultForm = {
   username: '',
   password: '',
-  passwordRepeat: ''
+  passwordRepeat: '',
+  phone: '',
+  roles: [],
+  company: { name: '', email: ''}
 }
 
 export default {
@@ -55,36 +95,68 @@ export default {
   },
   data() {
     var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('Please input the password'))
-      } else {
+      if (!this.isEdit && value === '') {
+        callback(new Error(this.$t('message.password.notnull')))
+      } else if (this.isEdit && value !== ''){
         if (this.postForm.password !== '') {
           this.$refs.postForm.validateField('passwordRepeat')
         }
         callback()
+      } else {
+        callback()
       }
     }
     var validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('Please input the password again'))
-      } else if (value !== this.postForm.password) {
-        callback(new Error('Two inputs don\'t match!'))
+      if (this.postForm.password !== '' && value === '') {
+        callback(new Error(this.$t('message.password.repeatnull')))
+      } else if (value !== '' && value !== this.postForm.password) {
+        callback(new Error(this.$t('message.password.nomatch')))
       } else {
+        callback()
+      }
+    }
+
+    var validatePhone = (rule, value, callback) => {
+      if (!value.match(/\+?[\d \-]{8,12}/)) {
+        callback(new Error(this.$t('message.phone.notnull')))
+      } else {
+        callback()
+      }
+    }
+
+    var validateCompany = (rule, value, callback) => {
+      console.log(value)
+      if (!this.postForm.roles.find(val => {return val === 'customer'})) {
+        callback()
+      }
+      else if (value === '') {
+        callback(new Error(this.$t('message.company.required')))
+      }
+      else {
         callback()
       }
     }
     return {
       postForm: Object.assign({}, defaultForm),
       loading: false,
+      t: locale,
       rules: {
         username: [
-          { required: true, message: 'Username required', trigger: 'blur' },
-          { min: 2, message: 'Username length shall be at least 2 characters', trigger: 'blur' }
+          { required: true, message: this.$t('message.username.required'), trigger: 'blur' },
+          { min: 2, message: this.$t('message.username.len'), trigger: 'blur' }
         ],
         password: [
           { validator: validatePass, trigger: 'blur' }
         ],
-        passwordRepeat: [{ validator: validatePass2, trigger: 'blur' }]
+        passwordRepeat: [
+          { validator: validatePass2, trigger: 'blur' }
+        ],
+        phone: [
+          { validator: validatePhone, trigger: 'blur' }
+        ],
+        company: {name: [
+          { validator: validateCompany, trigger: 'blur' }
+        ]}
       }
 
     }
@@ -92,15 +164,27 @@ export default {
   created() {
   },
   mounted() {
-    if (this.userId) {
-      getUser(this.userId).then(response => {
-        if (response.status === 200) {
-          this.postForm.username = response.data.username
-        }
-      })
-    }
+    this.loadData()
   },
   methods: {
+    loadData() {
+      var uid = this.isEdit ? (this.userId ? this.userId : this.$route.params.id) : false
+      if (!uid) return
+      getUser(uid).then(response => {
+        if (response.status === 200) {
+          var data = response.data
+          this.postForm.username = response.data.username
+          this.postForm.roles = response.data.plainRoles
+          this.postForm.company.name = data.company ? data.company.name : ''
+          console.log(response.data)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
+    },
+    checkIsCustomer(item) {
+      return item === 'customer'
+    },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {

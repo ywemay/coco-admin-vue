@@ -1,7 +1,13 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import i18n from '@/lang' // internationalization
 
 Vue.use(Router)
+
+i18n.locale = 'en'
+function $t (key, value) {
+  return i18n.t(key, value)
+}
 
 /* Layout */
 import Layout from '@/layout'
@@ -49,9 +55,9 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: 'Dashboard',
+      name: $t('route.dashboard'),
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: $t('route.dashboard'), icon: 'dashboard' }
     }]
   },
   {
@@ -59,26 +65,26 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/sale/orders',
     name: 'Sales',
-    meta: { title: 'Sales', icon: 'table' },
+    meta: { title: $t('route.sales'), icon: 'table' },
     children: [
       {
         path: 'create',
-        name: 'Create Order',
+        name: 'CreateSaleOrder',
         component: () => import('@/views/saleorders/create'),
-        meta: { title: 'Create Order', icon: 'form' }
+        meta: { title: $t('route.order.create'), icon: 'form' }
       },
       {
         path: 'edit/:id(\\d+)',
         name: 'EditSaleOrder',
         component: () => import('@/views/saleorders/edit'),
-        meta: { title: 'Edit Order', icon: 'form', activeMenu: '/sale/orders' },
+        meta: { title: $t('route.order.edit'), icon: 'form', activeMenu: '/sale/orders' },
         hidden: true
       },
       {
         path: 'orders',
         name: 'SaleOrderList',
         component: () => import('@/views/saleorders/list'),
-        meta: { title: 'Order List', icon: 'table' }
+        meta: { title: $t('route.order.list'), icon: 'table' }
       }
     ]
   },
@@ -87,26 +93,26 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/users/list',
     name: 'Users',
-    meta: { title: 'Users', icon: 'user' },
+    meta: { title: $t('route.users'), icon: 'user' },
     children: [
       {
         path: 'create',
         name: 'CreateUser',
         component: () => import('@/views/user/create'),
-        meta: { title: 'Create User', icon: 'form' }
+        meta: { title: $t('route.user.create'), icon: 'form' }
       },
       {
         path: 'edit/:id(\\d+)',
         name: 'EditUser',
         component: () => import('@/views/user/edit'),
-        meta: { title: 'Edit user', icon: 'edit', activeMenu: '/users/list' },
+        meta: { title: $t('route.user.edit'), icon: 'edit', activeMenu: '/users/list' },
         hidden: true
       },
       {
         path: 'list',
         name: 'UsersList',
         component: () => import('@/views/user/list'),
-        meta: { title: 'User List', icon: 'table' }
+        meta: { title: $t('route.user.list'), icon: 'table' }
       }
     ]
   },
@@ -116,20 +122,27 @@ export const constantRoutes = [
     path: '/clorders',
     component: Layout,
     redirect: '/clorders/list',
-    name: 'Container Load Orders',
-    meta: { title: 'Container Load Orders', icon: 'ctnrload' },
+    name: 'ContainerLoadOrders',
+    meta: { title: $t('route.clorders'), icon: 'ctnrload' },
     children: [
       {
         path: 'list',
         name: 'CLOrders',
         component: () => import('@/views/clorders/list'),
-        meta: { title: 'Container Load Orders', icon: 'ctnrload' }
+        meta: { title: $t('route.clorder.list'), icon: 'ctnrload' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        name: 'EditCLOrder',
+        component: () => import('@/views/clorders/edit'),
+        meta: { title: $t('route.clorder.edit'), icon: 'edit', activeMenu: '/clorders/list' },
+        hidden: true
       },
       {
         path: 'create',
         name: 'CreateCLOrder',
         component: () => import('@/views/clorders/create'),
-        meta: { title: 'Create Container Load Order', icon: 'form' }
+        meta: { title: $t('route.clorder.create'), icon: 'form' }
       }
     ]
   },

@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { getUsers, createUser } from '@/api/user'
+import { getList, createUser } from '@/api/user'
 import debounce from 'throttle-debounce/debounce'
 import { Message } from 'element-ui'
 
@@ -135,7 +135,7 @@ export default {
     },
     searchUsers() {
       if (!this.userForm.username) return
-      getUsers({ username: this.userForm.username }).then(response => {
+      getList({ username: this.userForm.username }).then(response => {
         if (response.status === 200) {
           this.foundUsers = response.data['hydra:member']
         } else {

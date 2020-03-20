@@ -1,50 +1,17 @@
 <template>
   <div class="cl-orders-container">
-    <el-table
-      v-loading="listLoading"
-      :data="list"
-      element-loading-text="Loading"
-      border
-      fit
-      highlight-current-row
-    >
-      <el-table-column align="center" label="ID" width="95">
-        <template slot-scope="scope">
-          {{ scope.row.id }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Date">
-        <template slot-scope="scope">
-          {{ scope.row.plainCreatedAt }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Customer">
-        <template slot-scope="scope">
-          {{ scope.row.assignedTo.username }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Company">
-        <template slot-scope="scope">
-          {{ scope.row.saleOrder.company.name }}
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="Start At">
-        <template slot-scope="scope">
-          {{ scope.row.saleOrder.plainStartDateTime }}
-        </template>
-      </el-table-column>
+    <div class="cl-order-card" v-for="order in list" :key="order.id">
+      <h3>{{ order.saleOrder.company ? order.saleOrder.company.name : '' }}</h3>
+      <i icon="el-icon-time">{{ order.plainCreatedAt }}</i>
+      <div class="assigned-to">{{ order.assignedTo.username }}</div>
+      <div class="start-at">{{ order.saleOrder.plainStartDateTime }}</div>
 
-      <el-table-column align="center" label="Actions" width="120">
-        <template slot-scope="scope">
-          <router-link :to="'/clorders/edit/'+scope.row.id">
-            <el-button type="primary" size="small" icon="el-icon-edit">
-              Edit
-            </el-button>
-          </router-link>
-        </template>
-      </el-table-column>
-    </el-table>
-
+      <router-link :to="'/clorders/edit/'+order.id">
+        <el-button type="primary" size="small" icon="el-icon-edit">
+          Edit
+        </el-button>
+      </router-link>
+    </div>
     <el-pagination
       background
       layout="prev, pager, next"
@@ -71,11 +38,12 @@ export default {
   },
   data() {
     return {
-      list: null,
+      list: [],
       totalItems: 0,
       listLoading: false,
       pageSize: 30,
-      currentPage: 1
+      currentPage: 1,
+      error: false
     }
   },
   created() {
@@ -84,9 +52,15 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
+      this.error = false
       getList({page: this.currentPage}).then(response => {
         this.list = response.data['hydra:member']
         this.totalItems = response.data['hydra:totalItems']
+        this.listLoading = false
+      }).catch(err => {
+        this.error = this.$t('error.clorderlistempty')
+        this.listLoading = false
+      }).finally(() => {
         this.listLoading = false
       })
     },
@@ -97,3 +71,14 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+div.cl-order-card {
+  padding: 6pt;
+  margin: 3pt;
+  width: 240pt;
+  text-align: center;
+  display: inline-block;
+  border: 1px solid gray;
+}
+</style>
