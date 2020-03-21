@@ -13,6 +13,13 @@
           @select-user="setCustomer"
         />
       </el-form-item>
+      <el-form-item>
+        <el-date-picker
+            v-model="form.startDateTime"
+            type="datetime"
+            :placeholder="$t('order.startDateTime')">
+        </el-date-picker>
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -21,6 +28,7 @@
 import { getOrder } from '@/api/saleorders'
 import UserDinamicField from '@/views/user/components/UserDinamicField'
 
+defaultForm
 export default {
   name: 'SaleOrderEditor',
   components: { UserDinamicField },
