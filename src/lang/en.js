@@ -23,7 +23,9 @@ export default {
   button: {
     save: 'Save',
     cancel: 'Cancel',
-    edit: 'Edit'
+    edit: 'Edit',
+    search: 'Search',
+    reset: 'Reset'
   },
   message: {
     password: {
@@ -42,9 +44,37 @@ export default {
       required: 'Company name required'
     }
   },
+  filters: {
+    username: 'Search by username',
+    role: 'Search by role'
+  },
   error: {
     userlistempty: 'Cannot find any users by given criteria.',
     clorderlistempty: 'No container load orders found by given criteria'
+  },
+  order: {
+    startDateTime: 'Start Date Time',
+    date: 'Order Date',
+    containerType: 'Container Type',
+    customer: 'Customer',
+    price: 'Price',
+    description: 'Description',
+    descriptionDetails: 'Describe the content to be loaded to container. Average carton box size.',
+    states: {
+      fresh: 'Fresh',
+      planned: 'Planned',
+      inprogress: 'In Progress',
+      done: 'Done',
+      canceled: 'Canceled'
+    }
+  },
+  clorder: {
+    assignedTo: 'Assigned to'
+  },
+  container: {
+    c20ft: '20FT Container',
+    hq: 'HQ Container',
+    other: 'Other'
   },
   user: {
     // The following fields aer used in userforms:
@@ -56,7 +86,8 @@ export default {
     teamleader: 'Teamleader',
     worker: 'Worker',
     customer: 'Customer',
-    phone: 'Phone number'
+    phone: 'Phone number',
+    enabled: 'Account Enabled'
   },
   company: {
     name: 'Company Name',

@@ -37,6 +37,9 @@
           :placeholder="$t('user.phone')"
           />
       </el-form-item>
+      <el-form-item :label="$t('user.enabled')">
+          <el-checkbox v-model="postForm.enabled" checked></el-checkbox>
+      </el-form-item>
       <el-form-item prop="roles" :label="$t('user.roles')">
         <el-checkbox-group v-model="postForm.roles">
          <el-checkbox label="admin">{{ $t('user.admin') }}</el-checkbox>
@@ -175,6 +178,7 @@ export default {
           var data = response.data
           this.postForm.username = response.data.username
           this.postForm.roles = response.data.plainRoles
+          this.postForm.enabled = response.data.enabled
           this.postForm.company.name = data.company ? data.company.name : ''
           console.log(response.data)
         }
