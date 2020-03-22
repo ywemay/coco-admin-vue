@@ -73,7 +73,6 @@
 
 <script>
 import { getUser } from '@/api/user'
-import locale from '@/lang/zh.js'
 
 const defaultForm = {
   username: '',
@@ -142,7 +141,6 @@ export default {
     return {
       postForm: Object.assign({}, defaultForm),
       loading: false,
-      t: locale,
       rules: {
         username: [
           { required: true, message: this.$t('message.username.required'), trigger: 'blur' },

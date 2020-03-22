@@ -42,6 +42,11 @@ export default {
     },
     company: {
       required: 'Company name required'
+    },
+    validation: {
+      required: 'The field is required',
+      date: 'Input a valid date',
+      company: 'Ivalid company provided'
     }
   },
   filters: {
@@ -50,7 +55,8 @@ export default {
   },
   error: {
     userlistempty: 'Cannot find any users by given criteria.',
-    clorderlistempty: 'No container load orders found by given criteria'
+    clorderlistempty: 'No container load orders found by given criteria',
+    savefail: 'Failed to save'
   },
   order: {
     startDateTime: 'Start Date Time',
@@ -60,6 +66,7 @@ export default {
     price: 'Price',
     description: 'Description',
     descriptionDetails: 'Describe the content to be loaded to container. Average carton box size.',
+    state: 'State',
     states: {
       fresh: 'Fresh',
       planned: 'Planned',

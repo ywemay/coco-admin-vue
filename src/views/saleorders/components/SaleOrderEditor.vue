@@ -1,19 +1,26 @@
 <template>
   <div class="sale-order-editor-container">
-    <el-form ref="form" :model="form" v-loading="formLoading">
-      <el-form-item :label="$t('order.date')">
+    <el-form
+      :model="formPost"
+      :rules="rules"
+      ref="formPost"
+      class="form-container"
+      v-loading="formLoading"
+      @submit.prevent
+    >
+      <el-form-item :label="$t('order.date')" prop="date">
         <el-col :span="11">
           <el-date-picker
-            v-model="form.date"
+            v-model="formPost.date"
             type="date"
             :placeholder="$t('order.date')"
             style="width: 100%;"
           />
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('order.customer')">
+      <el-form-item :label="$t('order.customer')" prop="company">
         <el-select
-          v-model="form.company"
+          v-model="formPost.company"
           remote
           filterable
           :remote-method="loadCompanies"
@@ -30,13 +37,13 @@
       </el-form-item>
       <el-form-item :label="$t('order.startDateTime')">
         <el-date-picker
-            v-model="form.startDateTime"
+            v-model="formPost.startDateTime"
             type="datetime"
             :placeholder="$t('order.startDateTime')">
         </el-date-picker>
       </el-form-item>
       <el-form-item :label="$t('order.containerType')">
-        <el-select v-model="form.containerType">
+        <el-select v-model="formPost.containerType">
             <el-option
                 v-for="item in containerTypes"
                 :label="item.label"
@@ -46,7 +53,7 @@
       </el-form-item>
       <el-form-item :label="$t('order.price')">
         <el-input-number
-          v-model="form.price"
+          v-model="formPost.price"
           :min="0"
           :max="90000"
           prefix-icon="el-icon-money"
@@ -54,23 +61,18 @@
       </el-form-item>
       <el-form-item :label="$t('order.description')">
         <el-input
-          v-model="form.description"
+          v-model="formPost.description"
           type="textarea"
           :placeholder="$t('order.descriptionDetails')"
           autosize
         />
       </el-form-item>
-      <el-radio-group v-model="form.state" class="order-states">
-          <el-radio-button label="0" class="fresh">{{ $t('order.states.fresh') }}</el-radio-button>
-          <el-radio-button label="1" class="planned">{{ $t('order.states.planned') }}</el-radio-button>
-          <el-radio-button label="2" class="in-progress">{{ $t('order.states.inprogress') }}</el-radio-button>
-          <el-radio-button label="3" class="done">{{ $t('order.states.done') }}</el-radio-button>
-          <el-radio-button label="10" class="canceled">{{ $t('order.states.canceled') }}</el-radio-button>
-      </el-radio-group>
-
+      <el-form-item :label="$t('order.state')">
+        <el-button :class="orderStates[formPost.state].cls">{{ orderStates[formPost.state].value }}</el-button>
+      </el-form-item>
       <el-form-item :label="$t('clorder.assignedTo')">
           <el-select
-            v-model="form.assignedTo"
+            v-model="formPost.assignedTo"
             remote
             filterable
             :remote-method="loadTeamLeaders"
@@ -84,7 +86,7 @@
               </el-option>
           </el-select>
       </el-form-item>
-      <el-button v-loading="formLoading" type="success" @click="submitForm('postForm')">
+      <el-button v-loading="formLoading" type="success" @click="submitForm('formPost')">
         {{ $t('button.save') }}
       </el-button>
     </el-form>
@@ -92,9 +94,10 @@
 </template>
 
 <script>
-import { getOrder } from '@/api/saleorders'
+import { getOrder, createOrder, updateOrder } from '@/api/saleorders'
 import { getList as getCompanies } from '@/api/company'
 import { getList as getUsers } from '@/api/user'
+import { formatDate, formatDateTime } from '@/utils/datetime'
 // import UserDinamicField from '@/views/user/components/UserDinamicField'
 
 
@@ -103,15 +106,18 @@ dt.setHours(dt.getHours() + 3)
 
 const defaultForm = {
   date: Date(),
-  company: {
-    '@id': '',
-    name: ''
-  },
+  company: '',
   state: 0,
   containerType: 'HQ',
   startDateTime: dt,
   price: 600,
   description: ''
+}
+
+const defaultCLForm = {
+  date: Date(),
+  assignedTo: '',
+  saleOrder: ''
 }
 
 export default {
@@ -125,7 +131,19 @@ export default {
   },
   data() {
     return {
-      form: Object.assign({}, defaultForm),
+      formPost: Object.assign({}, defaultForm),
+      rules: {
+        date: [
+          // { required: true, message: this.$t('message.validation.required') },
+          { required: true, type: 'regexp', pattern: /^\d\d\d\d\-\d\d\-\d\d*/,
+          message: this.$t('message.validation.date'), trigger: 'blur' }
+        ],
+        company: [
+          // { required: true, message: this.$t('message.validation.required'), trigger: 'blur' },
+          { required: true, pattern: /\/api\/companies\/\d+/,
+            message: this.$t('message.validation.company'), trigger: 'blur' }
+        ]
+      },
       saleOrderItems: [],
       links: [],
       theId: this.$route.params.id,
@@ -137,9 +155,16 @@ export default {
       companies: [],
       teamleaders: [],
       containerTypes: [
-        { label: '20FT', value: this.$t('container.c20ft') },
-        { label: 'HQ', value: this.$t('container.hq') },
-        { label: '20FT', value: this.$t('container.other') }
+        { value: '20FT', label: this.$t('container.c20ft') },
+        { value: 'HQ', label: this.$t('container.hq') },
+        { value: 'OTHER', label: this.$t('container.other') }
+      ],
+      orderStates: [
+        { label: 0, cls: 'fresh', value: this.$t('order.states.fresh') },
+        { label: 1, cls: 'planned', value: this.$t('order.states.planned') },
+        { label: 2, cls: 'inprogress', value: this.$t('order.states.inprogress') },
+        { label: 3, cls: 'done', value: this.$t('order.states.done') },
+        { label: 4, cls: 'canceled', value: this.$t('order.states.canceled') }
       ]
     }
   },
@@ -154,12 +179,13 @@ export default {
         getOrder(this.$route.params.id).then(response => {
           if (response.status === 200) {
             var data = response.data
-            saleOrder.customer = data.customer
-            this.form.id = data.id
-            console.log(data)
-            this.form.date = data.date
+            this.formPost = data
+            //saleOrder.customer = data.customer
+            //this.formPost.id = data.id
+            //this.formPost.date = data.date
             this.mapCompanies([data.company])
-            this.form.company = data.company['@id']
+            this.formPost.company = data.company['@id']
+            //this.formPost.price = data.price
           } else {
             console.log('Failed to load order')
           }
@@ -200,10 +226,10 @@ export default {
       }
     },
     companySelect(value) {
-      this.form.company = value
+      this.formPost.company = value
     },
     teamLeaderSelect(value){
-      this.form.teamleader = value
+      this.formPost.teamleader = value
     },
     mapCompanies(data) {
       this.companies = data.map(val => {
@@ -226,8 +252,53 @@ export default {
     setCustomer: function(aUser) {
       this.customer = aUser
     },
-    submitForm() {
-      console.log(this.form)
+    notifyResult(response){
+      if (response.status === 201) {
+        this.$notify({
+          title: this.$t('message.save'),
+          message: this.$t('saved.successfully'),
+          type: 'success',
+          duration: 2000
+        })
+      }
+      else {
+        this.$notify({
+          title: this.$t('message.save'),
+          message: this.$t('error.savefail'),
+          type: 'error',
+          duration: 2000
+        })
+      }
+      this.formLoading = false
+    },
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          var json = this.formPost
+          json.date = formatDate(this.formPost.date)
+          json.startDateTime = formatDateTime(this.formPost.startDateTime),
+
+          this.formLoading = true
+          if (this.isEdit) {
+            updateOrder(this.$route.params.id, json).then(response => {
+              this.notifyResult(response)
+            }).catch(error => {
+              this.formLoading = false
+            })
+          }
+          else {
+            createOrder(json).then(response => {
+              this.notifyResult(response)
+            }).catch(error => {
+              this.formLoading = false
+            })
+          }
+
+        } else {
+          console.log('Error submiting form...')
+          return false;
+        }
+      })
       this.$message('submit!')
     },
     onCancel() {
