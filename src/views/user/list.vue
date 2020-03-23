@@ -1,5 +1,5 @@
 <template>
-  <div class="user-list" v-loading="listLoading">
+  <div v-loading="listLoading" class="user-list">
     <div class="user-filters">
       <el-input
         v-model="filters.username"
@@ -9,20 +9,31 @@
         :placeholder="$t('filters.username')"
       />
       <el-select v-model="filters.roles" :placeholder="$t('filters.role')">
-          <el-option
-              v-for="item in roles"
-              :label="item.label"
-              :value="item.value">
-          </el-option>
+        <el-option
+          v-for="item in roles"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
       </el-select>
-      <el-button class="success" v-if="filters.username !=='' || filters.roles.length > 0" @click="resetSearch">{{ $t('button.reset') }}</el-button>
+      <el-button v-if="filters.username !=='' || filters.roles.length > 0" class="success" @click="resetSearch">{{ $t('button.reset') }}</el-button>
       <el-button class="success" @click="fetchData">{{ $t('button.search') }}</el-button>
     </div>
-    <div class="error" v-if="error">{{ error }}</div>
-    <div class="user-card" :class="'user-' + (user.enabled ? 'enabled' : 'disabled')" v-for="user in list" :key="user.username">
+    <div v-if="error" class="error">{{ error }}</div>
+    <div
+      v-for="user in list"
+      :key="user.username"
+      class="user-card"
+      :class="'user-' + (user.enabled ? 'enabled' : 'disabled')"
+    >
       <h3>{{ user.username }}</h3>
-      <div><i v-for="role in user.plainRoles" class="el-icon-user">{{ role }}</i> </div>
-      <div class="user-company" v-if="user.company"><i class="el-icon-office-building"></i> {{ user.company.name }}</div>
+      <div>
+        <i v-for="role in user.plainRoles" :key="role" class="el-icon-user">
+          {{ role }}
+        </i>
+      </div>
+      <div v-if="user.company" class="user-company">
+        <i class="el-icon-office-building" /> {{ user.company.name }}</div>
       <router-link :to="'/users/edit/'+user.id">
         <el-button type="primary" size="small" icon="el-icon-edit">
           {{ $t('button.edit') }}
@@ -31,13 +42,13 @@
     </div>
 
     <el-pagination
+      v-if="totalItems > pageSize"
       background
       layout="prev, pager, next"
-      v-if="totalItems > pageSize"
-      @current-change="handleCurrentChange"
       :page-size="pageSize"
-      :total="totalItems">
-    </el-pagination>
+      :total="totalItems"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 
@@ -57,7 +68,7 @@ export default {
         { value: 'ROLE_ADMIN', label: this.$t('user.admin') },
         { value: 'ROLE_CUSTOMER', label: this.$t('user.customer') },
         { value: 'ROLE_TEAMLEADER', label: this.$t('user.teamleader') },
-        { value: 'ROLE_WORKER', label: this.$t('user.worker') },
+        { value: 'ROLE_WORKER', label: this.$t('user.worker') }
       ],
       totalItems: 0,
       listLoading: false,
@@ -82,19 +93,18 @@ export default {
       if (this.filters.roles) {
         query.roles = this.filters.roles
       }
-      console.log(query)
       getList(query).then(response => {
         this.list = response.data['hydra:member']
         this.totalItems = response.data['hydra:totalItems']
         this.listLoading = false
-      }).catch(error => {
+      }).catch(() => {
         this.list = []
         this.totalItems = 0
         this.listLoading = false
         this.error = this.$t('error.userlistempty')
       })
     },
-    resetSearch(){
+    resetSearch() {
       this.filters.username = ''
       this.filters.roles = []
       this.fetchData()

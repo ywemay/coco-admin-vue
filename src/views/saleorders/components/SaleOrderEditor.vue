@@ -1,11 +1,11 @@
 <template>
   <div class="sale-order-editor-container">
     <el-form
+      ref="formPost"
+      v-loading="formLoading"
+      class="form-container"
       :model="formPost"
       :rules="rules"
-      ref="formPost"
-      class="form-container"
-      v-loading="formLoading"
       @submit.prevent
     >
       <el-form-item :label="$t('order.date')" prop="date">
@@ -26,29 +26,30 @@
           :remote-method="loadCompanies"
           :loading="companyLoading"
           @change="companySelect"
-          >
-            <el-option
-                v-for="item in companies"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-            </el-option>
+        >
+          <el-option
+            v-for="item in companies"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('order.startDateTime')">
         <el-date-picker
-            v-model="formPost.startDateTime"
-            type="datetime"
-            :placeholder="$t('order.startDateTime')">
-        </el-date-picker>
+          v-model="formPost.startDateTime"
+          type="datetime"
+          :placeholder="$t('order.startDateTime')"
+        />
       </el-form-item>
       <el-form-item :label="$t('order.containerType')">
         <el-select v-model="formPost.containerType">
-            <el-option
-                v-for="item in containerTypes"
-                :label="item.label"
-                :value="item.value">
-            </el-option>
+          <el-option
+            v-for="item in containerTypes"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
         </el-select>
       </el-form-item>
       <el-form-item :label="$t('order.price')">
@@ -57,7 +58,7 @@
           :min="0"
           :max="90000"
           prefix-icon="el-icon-money"
-          ></el-input-number>
+        />
       </el-form-item>
       <el-form-item :label="$t('order.description')">
         <el-input
@@ -71,20 +72,21 @@
         <el-button :class="orderStates[formPost.state].cls">{{ orderStates[formPost.state].value }}</el-button>
       </el-form-item>
       <el-form-item :label="$t('clorder.assignedTo')">
-          <el-select
-            v-model="formPost.assignedTo"
-            remote
-            filterable
-            :remote-method="loadTeamLeaders"
-            :loading="teamLeadersLoading"
-            @change="teamLeaderSelect"
-            >
-              <el-option
-                  v-for="item in teamleaders"
-                  :label="item.label"
-                  :value="item.value">
-              </el-option>
-          </el-select>
+        <el-select
+          v-model="formPost.assignedTo"
+          remote
+          filterable
+          :remote-method="loadTeamLeaders"
+          :loading="teamLeadersLoading"
+          @change="teamLeaderSelect"
+        >
+          <el-option
+            v-for="item in teamleaders"
+            :key="item.id"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </el-form-item>
       <el-button v-loading="formLoading" type="success" @click="submitForm('formPost')">
         {{ $t('button.save') }}
@@ -98,10 +100,8 @@ import { getOrder, createOrder, updateOrder } from '@/api/saleorders'
 import { getList as getCompanies } from '@/api/company'
 import { getList as getUsers } from '@/api/user'
 import { formatDate, formatDateTime } from '@/utils/datetime'
-// import UserDinamicField from '@/views/user/components/UserDinamicField'
 
-
-var dt = new Date();
+var dt = new Date()
 dt.setHours(dt.getHours() + 3)
 
 const defaultForm = {
@@ -112,12 +112,6 @@ const defaultForm = {
   startDateTime: dt,
   price: 600,
   description: ''
-}
-
-const defaultCLForm = {
-  date: Date(),
-  assignedTo: '',
-  saleOrder: ''
 }
 
 export default {
@@ -136,7 +130,7 @@ export default {
         date: [
           // { required: true, message: this.$t('message.validation.required') },
           { required: true, type: 'regexp', pattern: /^\d\d\d\d\-\d\d\-\d\d*/,
-          message: this.$t('message.validation.date'), trigger: 'blur' }
+            message: this.$t('message.validation.date'), trigger: 'blur' }
         ],
         company: [
           // { required: true, message: this.$t('message.validation.required'), trigger: 'blur' },
@@ -174,18 +168,13 @@ export default {
   methods: {
     loadData() {
       if (this.isEdit) {
-        const saleOrder = this
         this.formLoading = true
         getOrder(this.$route.params.id).then(response => {
           if (response.status === 200) {
             var data = response.data
             this.formPost = data
-            //saleOrder.customer = data.customer
-            //this.formPost.id = data.id
-            //this.formPost.date = data.date
             this.mapCompanies([data.company])
             this.formPost.company = data.company['@id']
-            //this.formPost.price = data.price
           } else {
             console.log('Failed to load order')
           }
@@ -197,7 +186,7 @@ export default {
     loadCompanies(cname) {
       if (cname.length > 1) {
         this.companyLoading = true
-        getCompanies({name: cname}).then(response => {
+        getCompanies({ name: cname }).then(response => {
           var data = response.data
           if (data['hydra:member']) {
             this.mapCompanies(data['hydra:member'])
@@ -206,13 +195,17 @@ export default {
         }).catch(error => {
           this.companies = []
           this.companyLoading = false
+          console.log(error)
         })
       }
     },
     loadTeamLeaders(uname) {
       if (uname.length > 1) {
         this.teamLeadersLoading = true
-        getUsers({username: uname, roles: 'ROLE_TEAMLEADER', enabled: 1}).then(response => {
+        getUsers({
+          username: uname,
+          roles: 'ROLE_TEAMLEADER',
+          enabled: 1 }).then(response => {
           var data = response.data
           console.log(data['hydra:member'])
           if (data['hydra:member']) {
@@ -222,13 +215,14 @@ export default {
         }).catch(error => {
           this.teamleaders = []
           this.teamLeadersLoading = false
+          console.log(error)
         })
       }
     },
     companySelect(value) {
       this.formPost.company = value
     },
-    teamLeaderSelect(value){
+    teamLeaderSelect(value) {
       this.formPost.teamleader = value
     },
     mapCompanies(data) {
@@ -252,7 +246,7 @@ export default {
     setCustomer: function(aUser) {
       this.customer = aUser
     },
-    notifyResult(response){
+    notifyResult(response) {
       if (response.status === 201) {
         this.$notify({
           title: this.$t('message.save'),
@@ -260,8 +254,7 @@ export default {
           type: 'success',
           duration: 2000
         })
-      }
-      else {
+      } else {
         this.$notify({
           title: this.$t('message.save'),
           message: this.$t('error.savefail'),
@@ -276,7 +269,7 @@ export default {
         if (valid) {
           var json = this.formPost
           json.date = formatDate(this.formPost.date)
-          json.startDateTime = formatDateTime(this.formPost.startDateTime),
+          json.startDateTime = formatDateTime(this.formPost.startDateTime)
 
           this.formLoading = true
           if (this.isEdit) {
@@ -284,19 +277,19 @@ export default {
               this.notifyResult(response)
             }).catch(error => {
               this.formLoading = false
+              console.log(error)
             })
-          }
-          else {
+          } else {
             createOrder(json).then(response => {
               this.notifyResult(response)
             }).catch(error => {
               this.formLoading = false
+              console.log(error)
             })
           }
-
         } else {
           console.log('Error submiting form...')
-          return false;
+          return false
         }
       })
       this.$message('submit!')

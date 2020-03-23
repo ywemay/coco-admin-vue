@@ -1,6 +1,6 @@
 <template>
   <div class="orders-container">
-    <div class="order-card" v-for="order in list" :key="order.id">
+    <div v-for="order in list" :key="order.id" class="order-card">
       <h3>{{ order.company ? order.company.name : '' }}</h3>
       <div class="order-start-time">{{ order.plainStartDateTime }}</div>
       <div class="order-container-type">{{ order.containerType }}</div>
@@ -14,13 +14,13 @@
     </div>
 
     <el-pagination
+      v-if="totalItems > pageSize"
       background
       layout="prev, pager, next"
-      v-if="totalItems > pageSize"
-      @current-change="handleCurrentChange"
       :page-size="pageSize"
-      :total="totalItems">
-    </el-pagination>
+      :total="totalItems"
+      @current-change="handleCurrentChange"
+    />
   </div>
 </template>
 
@@ -53,7 +53,7 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getList({page: this.currentPage}).then(response => {
+      getList({ page: this.currentPage }).then(response => {
         this.list = response.data['hydra:member']
         this.totalItems = response.data['hydra:totalItems']
         this.listLoading = false

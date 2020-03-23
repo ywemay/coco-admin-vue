@@ -35,33 +35,33 @@
           v-model="postForm.phone"
           prefix-icon="el-icon-mobile"
           :placeholder="$t('user.phone')"
-          />
+        />
       </el-form-item>
       <el-form-item :label="$t('user.enabled')">
-          <el-checkbox v-model="postForm.enabled" checked></el-checkbox>
+        <el-checkbox v-model="postForm.enabled" checked />
       </el-form-item>
       <el-form-item prop="roles" :label="$t('user.roles')">
         <el-checkbox-group v-model="postForm.roles">
-         <el-checkbox label="admin">{{ $t('user.admin') }}</el-checkbox>
-         <el-checkbox label="customer"> {{ $t('user.customer') }}</el-checkbox>
-         <el-checkbox label="teamleader">{{ $t('user.teamleader') }}</el-checkbox>
-         <el-checkbox label="worker">{{ $t('user.worker') }}</el-checkbox>
+          <el-checkbox label="admin">{{ $t('user.admin') }}</el-checkbox>
+          <el-checkbox label="customer"> {{ $t('user.customer') }}</el-checkbox>
+          <el-checkbox label="teamleader">{{ $t('user.teamleader') }}</el-checkbox>
+          <el-checkbox label="worker">{{ $t('user.worker') }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <div class="company-related-data" v-if="postForm.roles.find(checkIsCustomer)">
+      <div v-if="postForm.roles.find(checkIsCustomer)" class="company-related-data">
         <el-form-item prop="company.name">
           <el-input
             v-model="postForm.company.name"
             prefix-icon="el-icon-office-building"
             :placeholder="$t('company.name')"
-            />
-         </el-form-item>
+          />
+        </el-form-item>
         <el-form-item prop="company.email">
           <el-input
             v-model="postForm.company.email"
             prefix-icon="el-icon-message"
             :placeholder="$t('company.email')"
-            />
+          />
         </el-form-item>
       </div>
       <el-button v-loading="loading" type="success" @click="submitForm('postForm')">
@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { getUser } from '@/api/user'
+import { getUser, createUser, updateUser } from '@/api/user'
 
 const defaultForm = {
   username: '',
@@ -80,7 +80,7 @@ const defaultForm = {
   passwordRepeat: '',
   phone: '',
   roles: [],
-  company: { name: '', email: ''}
+  company: { name: '', email: '' }
 }
 
 export default {
@@ -99,7 +99,7 @@ export default {
     var validatePass = (rule, value, callback) => {
       if (!this.isEdit && value === '') {
         callback(new Error(this.$t('message.password.notnull')))
-      } else if (this.isEdit && value !== ''){
+      } else if (this.isEdit && value !== '') {
         if (this.postForm.password !== '') {
           this.$refs.postForm.validateField('passwordRepeat')
         }
@@ -127,14 +127,13 @@ export default {
     }
 
     var validateCompany = (rule, value, callback) => {
-      console.log(value)
-      if (!this.postForm.roles.find(val => {return val === 'customer'})) {
+      if (!this.postForm.roles.find(val => {
+        return val === 'customer'
+      })) {
         callback()
-      }
-      else if (value === '') {
+      } else if (value === '') {
         callback(new Error(this.$t('message.company.required')))
-      }
-      else {
+      } else {
         callback()
       }
     }
@@ -155,9 +154,9 @@ export default {
         phone: [
           { validator: validatePhone, trigger: 'blur' }
         ],
-        company: {name: [
+        company: { name: [
           { validator: validateCompany, trigger: 'blur' }
-        ]}
+        ] }
       }
 
     }
@@ -185,7 +184,7 @@ export default {
     checkIsCustomer(item) {
       return item === 'customer'
     },
-    notifyResult(response){
+    notifyResult(response) {
       if (response.status === 201) {
         this.$notify({
           title: this.$t('message.save'),
@@ -193,8 +192,7 @@ export default {
           type: 'success',
           duration: 2000
         })
-      }
-      else {
+      } else {
         this.$notify({
           title: this.$t('message.save'),
           message: this.$t('error.savefail'),
@@ -208,17 +206,17 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.loading = true
+          var json = []
           if (this.isEdit) {
-            updateOrder(this.$route.params.id, json).then(response => {
+            updateUser(this.$route.params.id, json).then(response => {
               this.notifyResult(response)
-            }).catch(error => {
+            }).catch(() => {
               this.loading = false
             })
-          }
-          else {
-            createOrder(json).then(response => {
+          } else {
+            createUser(json).then(response => {
               this.notifyResult(response)
-            }).catch(error => {
+            }).catch(() => {
               this.laoding = false
             })
           }
