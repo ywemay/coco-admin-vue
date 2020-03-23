@@ -46,7 +46,7 @@ export function createUser(data) {
   })
 }
 
-export function patchUser(id, data) {
+export function updateUser(id, data) {
   return request({
     url: '/users/' + id,
     method: 'put',

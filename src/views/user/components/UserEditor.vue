@@ -162,8 +162,6 @@ export default {
 
     }
   },
-  created() {
-  },
   mounted() {
     this.loadData()
   },
@@ -187,16 +185,43 @@ export default {
     checkIsCustomer(item) {
       return item === 'customer'
     },
+    notifyResult(response){
+      if (response.status === 201) {
+        this.$notify({
+          title: this.$t('message.save'),
+          message: this.$t('saved.successfully'),
+          type: 'success',
+          duration: 2000
+        })
+      }
+      else {
+        this.$notify({
+          title: this.$t('message.save'),
+          message: this.$t('error.savefail'),
+          type: 'error',
+          duration: 2000
+        })
+      }
+      this.loading = false
+    },
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.loading = true
-          this.$notify({
-            title: 'Save',
-            message: 'Saved successfully',
-            type: 'success',
-            duration: 2000
-          })
+          if (this.isEdit) {
+            updateOrder(this.$route.params.id, json).then(response => {
+              this.notifyResult(response)
+            }).catch(error => {
+              this.loading = false
+            })
+          }
+          else {
+            createOrder(json).then(response => {
+              this.notifyResult(response)
+            }).catch(error => {
+              this.laoding = false
+            })
+          }
           this.loading = false
         } else {
           console.log('Error submiting user form!!!')

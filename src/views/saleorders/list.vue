@@ -5,7 +5,7 @@
       <div class="order-start-time">{{ order.plainStartDateTime }}</div>
       <div class="order-container-type">{{ order.containerType }}</div>
       <div class="order-price">{{ order.price }}元</div>
-      <div class="order-clorder">{{ order.containerLoadOrder }}元</div>
+      <div class="order-clorder">{{ order.containerLoadOrder }}</div>
       <router-link :to="'/sale/edit/'+order.id">
         <el-button type="primary" size="small" icon="el-icon-edit">
           Edit
@@ -16,6 +16,7 @@
     <el-pagination
       background
       layout="prev, pager, next"
+      v-if="totalItems > pageSize"
       @current-change="handleCurrentChange"
       :page-size="pageSize"
       :total="totalItems">
