@@ -1,17 +1,22 @@
 <template>
-  <div class="orders-container">
-    <div class="order-card" v-for="order in list" :key="order.id">
-      <h3>{{ order.company ? order.company.name : '' }}</h3>
-      <div class="order-start-time">{{ order.plainStartDateTime }}</div>
-      <div class="order-container-type">{{ order.containerType }}</div>
-      <div class="order-price">{{ order.price }}元</div>
-      <div class="order-clorder">{{ order.containerLoadOrder }}</div>
-      <router-link :to="'/sale/edit/'+order.id">
-        <el-button type="primary" size="small" icon="el-icon-edit">
-          Edit
-        </el-button>
-      </router-link>
-    </div>
+  <el-checkbox-group v-model="selectedItems" class="orders-container">
+    <el-checkbox-button class="order-card" v-for="order in list" :label="order.id" :key="order.id">
+      <div v-if="selectedOrder === order.id" class="order-card-actions">
+        <router-link :to="'/sale/edit/'+order.id">
+          <div class="btn-edit"><i class="el-icon-edit" /></div>
+        </router-link>
+        <router-link :to="'/sale/delete/'+order.id">
+          <div class="btn-del"><i class="el-icon-delete" /></div>
+        </router-link>
+      </div>
+      <div class="order-card-content" @click="selectOrder(order.id)">
+        <div class="order-name">{{ order.owner ? order.owner.company : '' }}</div>
+        <div class="order-start-time"><i class="el-icon-watch" /> {{ order.plainStartDateTime }}</div>
+        <div class="order-container-type"><i class="el-icon-truck" /> {{ order.containerType }}</div>
+        <div class="order-price">{{ order.price }}元</div>
+        <div class="order-clorder">{{ order.containerLoadOrder }}</div>
+      </div>
+    </el-checkbox-button>
 
     <el-pagination
       background
@@ -21,7 +26,7 @@
       :page-size="pageSize"
       :total="totalItems">
     </el-pagination>
-  </div>
+  </el-checkbox-group>
 </template>
 
 <script>
@@ -41,10 +46,12 @@ export default {
   data() {
     return {
       list: null,
+      selectedItems: [],
       totalItems: 0,
       listLoadin: true,
       pageSize: 30,
-      currentPage: 1
+      currentPage: 1,
+      selectedOrder: 0
     }
   },
   created() {
@@ -62,6 +69,16 @@ export default {
     handleCurrentChange(val) {
       this.currentPage = val
       this.fetchData()
+    },
+    selectOrder(oId) {
+      if (this.selectedOrder == oId) {
+        this.selectedOrder = 0
+      } else {
+        this.selectedOrder = oId
+      }
+    },
+    logItems() {
+      console.log(this.selectedItems)
     }
   }
 }
@@ -69,15 +86,32 @@ export default {
 
 <style scoped>
 div.order-card {
-  padding: 6pt;
   margin: 3pt;
   width: 240pt;
   text-align: center;
   display: inline-block;
   border: 1px solid gray;
 }
+.order-card-content {
+  padding: 6pt;
+}
 .order-card .order-price {
   font-weight: bolder;
   color: red;
+}
+.order-card-actions {
+  position: absolute;
+}
+.order-card-actions .btn-edit,
+.order-card-actions .btn-del {
+  color: white;
+  padding: 9pt;
+  border: 1px solid white;
+}
+.btn-del {
+  background: red;
+}
+.btn-edit {
+  background: green;
 }
 </style>

@@ -209,14 +209,14 @@ export default {
         if (valid) {
           this.loading = true
           if (this.isEdit) {
-            updateOrder(this.$route.params.id, json).then(response => {
+            updateUser(this.$route.params.id, json).then(response => {
               this.notifyResult(response)
             }).catch(error => {
               this.loading = false
             })
           }
           else {
-            createOrder(json).then(response => {
+            createUser(json).then(response => {
               this.notifyResult(response)
             }).catch(error => {
               this.laoding = false
