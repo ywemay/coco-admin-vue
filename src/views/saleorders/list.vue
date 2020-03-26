@@ -19,10 +19,9 @@
     </el-checkbox-button>
 
     <el-pagination
+      v-if="totalItems > pageSize"
       background
       layout="prev, pager, next"
-      v-if="totalItems > pageSize"
-      @current-change="handleCurrentChange"
       :page-size="pageSize"
       :total="totalItems">
     </el-pagination>
@@ -60,7 +59,7 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getList({page: this.currentPage}).then(response => {
+      getList({ page: this.currentPage }).then(response => {
         this.list = response.data['hydra:member']
         this.totalItems = response.data['hydra:totalItems']
         this.listLoading = false
