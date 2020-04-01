@@ -1,6 +1,6 @@
 <template>
-  <el-checkbox-group v-model="selectedItems" class="orders-container">
-    <el-checkbox-button class="order-card" v-for="order in list" :label="order.id" :key="order.id">
+  <div class="orders-container">
+    <div class="order-card" v-for="order in list" :label="order.id" :key="order.id">
       <div v-if="selectedOrder === order.id" class="order-card-actions">
         <router-link :to="'/sale/edit/'+order.id">
           <div class="btn-edit"><i class="el-icon-edit" /></div>
@@ -9,14 +9,14 @@
           <div class="btn-del"><i class="el-icon-delete" /></div>
         </router-link>
       </div>
-      <div class="order-card-content" @click="selectOrder(order.id)">
+      <div class="order-card-content" :class="order.selected ? 'selected' : ''" @click="selectOrder(order)">
         <div class="order-name">{{ order.owner ? order.owner.company : '' }}</div>
         <div class="order-start-time"><i class="el-icon-watch" /> {{ order.plainStartDateTime }}</div>
         <div class="order-container-type"><i class="el-icon-truck" /> {{ order.containerType }}</div>
         <div class="order-price">{{ order.price }}元</div>
         <div class="order-clorder">{{ order.containerLoadOrder }}</div>
       </div>
-    </el-checkbox-button>
+    </div>
 
     <el-pagination
       v-if="totalItems > pageSize"
@@ -25,7 +25,7 @@
       :page-size="pageSize"
       :total="totalItems">
     </el-pagination>
-  </el-checkbox-group>
+  </div>
 </template>
 
 <script>
@@ -69,12 +69,9 @@ export default {
       this.currentPage = val
       this.fetchData()
     },
-    selectOrder(oId) {
-      if (this.selectedOrder == oId) {
-        this.selectedOrder = 0
-      } else {
-        this.selectedOrder = oId
-      }
+    selectOrder(order) {
+      order.selected = !order.selected
+      console.log(this.list)
     },
     logItems() {
       console.log(this.selectedItems)
@@ -112,5 +109,8 @@ div.order-card {
 }
 .btn-edit {
   background: green;
+}
+.selected {
+  background: lightgreen;
 }
 </style>
