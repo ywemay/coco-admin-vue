@@ -104,7 +104,7 @@ div.order-card {
 .order-card-actions .btn-edit,
 .order-card-actions .btn-del {
   color: white;
-  padding: 9pt;
+  padding: 5pt;
   border: 1px solid white;
 }
 .btn-del {
