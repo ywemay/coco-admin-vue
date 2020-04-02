@@ -1,6 +1,18 @@
 <template>
-  <div v-loading="listLoading" class="user-list">
-    <div class="user-filters">
+  <div v-loading="listLoading" class="card-list">
+    <div class="action-bar">
+      <template v-if="selectedItems.length > 0">
+        <el-button v-if="selectedItems.length == 1" type="primary" icon="el-icon-edit" />
+        <el-button type="danger" icon="el-icon-delete" />
+        <el-button icon="el-icon-check" />
+        <el-badge :value="selectedItems.length" class="item" type="primary">
+          <el-button icon="el-icon-close" @click="selectedItems = []" />
+        </el-badge>
+      </template>
+      <el-button v-if="!buttons.search" type="primary" icon="el-icon-search" @click="buttons.search = !buttons.search" />
+    </div>
+    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="buttons.search" class="filters">
       <el-input
         v-model="filters.username"
         type="test"
@@ -17,25 +29,23 @@
         />
       </el-select>
       <el-button v-if="filters.username !=='' || filters.roles.length > 0" class="success" @click="resetSearch">{{ $t('button.reset') }}</el-button>
-      <el-button class="success" @click="fetchData">{{ $t('button.search') }}</el-button>
+      <el-button type="success" @click="fetchData(true)" icon="el-icon-search" :alt="$t('button.search')" />
+      <el-button icon="el-icon-close" @click="buttons.search = !buttons.search" />
     </div>
-    <div v-if="error" class="error">{{ error }}</div>
     <div
+      v-else
       v-for="user in list"
       :key="user.username"
-      class="user-card"
-      :class="'user-' + (user.enabled ? 'enabled' : 'disabled') + (selectedItems.indexOf(user.id) > -1 ? ' selected' : '')"
-      @click="showEditUser(user.id)"
-      @dblclick="selectUser(user.id)"
+      class="card"
+      :class="compileClass(user)"
+      @click="selectUser(user.id)"
     >
-      <div v-if="selectedId == user.id" class="card-actions">
-        <router-link :to="'/sale/edit/'+user.id">
-          <div class="btn-edit"><i class="el-icon-edit" /></div>
-        </router-link>
-        <router-link :to="'/sale/delete/'+user.id">
-          <div class="btn-del"><i class="el-icon-delete" /></div>
-        </router-link>
-      </div>
+      <i class="el-icon-success" />
+      <action-buttons
+        rootpath="/users"
+        :selected="selectedId"
+        :itemId="user.id"
+      />
       <h3>{{ user.username }}</h3>
       <div>
         <i v-for="role in user.plainRoles" :key="role" class="el-icon-user">
@@ -47,13 +57,14 @@
     </div>
 
     <el-pagination
-      v-if="totalItems > pageSize"
+      v-if="totalItems > pageSize && !buttons.search"
       background
       layout="prev, pager, next"
       :page-size="pageSize"
       :total="totalItems"
       @current-change="handleCurrentChange"
     />
+    <el-backtop taget=".users-list" />
   </div>
 </template>
 
@@ -62,12 +73,16 @@
 import { getList } from '@/api/user'
 
 export default {
+  name: 'UserList',
   data() {
     return {
       list: [],
       filters: {
         username: '',
         roles: ''
+      },
+      buttons: {
+        search: false
       },
       roles: [
         { value: 'ROLE_ADMIN', label: this.$t('user.admin') },
@@ -88,7 +103,10 @@ export default {
     this.fetchData()
   },
   methods: {
-    fetchData() {
+    fetchData(resetPage = false) {
+      if (resetPage) {
+        this.currentPage = 1
+      }
       this.listLoading = true
       this.error = false
       var query = {
@@ -104,24 +122,30 @@ export default {
         this.list = response.data['hydra:member']
         this.totalItems = response.data['hydra:totalItems']
         this.listLoading = false
+        this.buttons.search = false
       }).catch(() => {
         this.list = []
         this.totalItems = 0
         this.listLoading = false
         this.error = this.$t('error.userlistempty')
+        this.buttons.search = false
       })
     },
     resetSearch() {
       this.filters.username = ''
       this.filters.roles = []
       this.fetchData()
+      this.buttons.search = false
     },
     handleCurrentChange(val) {
       this.currentPage = val
       this.fetchData()
     },
-    showEditUser(anId) {
-      if (this.selectedItems.length > 0) {
+    clickBtnUp(anId) {
+      this.holdId = 0
+      var delay = new Date() -  this.clickBtnDownTime
+      console.log(delay)
+      if (this.selectedItems.length > 0 || delay > 3000) {
         this.selectedId = 0
         this.selectUser(anId)
         return
@@ -142,48 +166,21 @@ export default {
           return val !== anId
         })
       }
+    },
+    clickBtnDown(anId) {
+      this.holdId = anId
+      this.clickBtnDownTime = new Date()
+    },
+    compileClass(user) {
+      var res = user.enabled ? 'enabled' : 'disabled'
+      res += this.selectedItems.indexOf(user.id) > -1 ? ' selected' : ''
+      return res
     }
   }
 }
 </script>
 
-<style scoped>
-div.user-card {
-  padding: 6pt;
-  margin: 3pt;
-  width: 240pt;
-  text-align: center;
-  display: inline-block;
-}
-.user-card.user-enabled {
-  border: 1px solid green;
-}
-.user-card.user-disabled {
-  border: 1px solid gray;
-  background-color: #eee;
-}
-.user-filters .el-input {
-  max-width: 150pt;
-  display: inline-block;
-}
-.card-actions {
-  position: absolute;
-}
-.card-actions .btn-edit,
-.card-actions .btn-del {
-  color: white;
-  padding: 5pt;
-  border: 1px solid white;
-}
-.btn-del {
-  background: red;
-}
-.btn-edit {
-  background: green;
-}
-.user-card.user-enabled.selected,
-.user-card.user-disabled.selected {
-  border: 1px solid red;
-  background: lightcoral;
-}
+<style lang="scss" scoped>
+$card-width: 220pt;
+  @import "~@/styles/card-list.scss";
 </style>
