@@ -7,14 +7,14 @@
       class="form-container"
       @submit.prevent
     >
-      <el-form-item prop="username">
+      <el-form-item prop="username" class="responsive-width">
         <el-input
           v-model="postForm.username"
           prefix-icon="el-icon-user"
           :placeholder="$t('user.username')"
         />
       </el-form-item>
-      <el-form-item prop="password">
+      <el-form-item prop="password" class="responsive-width">
         <el-input
           v-model="postForm.password"
           type="password"
@@ -22,7 +22,7 @@
           :placeholder="$t('user.password')"
         />
       </el-form-item>
-      <el-form-item prop="passwordRepeat">
+      <el-form-item prop="passwordRepeat" class="responsive-width">
         <el-input
           v-model="postForm.passwordRepeat"
           type="password"
@@ -30,7 +30,7 @@
           :placeholder="$t('user.passwordRepeat')"
         />
       </el-form-item>
-      <el-form-item prop="phone">
+      <el-form-item prop="phone" class="responsive-width">
         <el-input
           v-model="postForm.phone"
           prefix-icon="el-icon-mobile"
@@ -48,22 +48,6 @@
           <el-checkbox label="worker">{{ $t('user.worker') }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <div v-if="postForm.roles.find(checkIsCustomer)" class="company-related-data">
-        <el-form-item prop="company.name">
-          <el-input
-            v-model="postForm.company.name"
-            prefix-icon="el-icon-office-building"
-            :placeholder="$t('company.name')"
-          />
-        </el-form-item>
-        <el-form-item prop="company.email">
-          <el-input
-            v-model="postForm.company.email"
-            prefix-icon="el-icon-message"
-            :placeholder="$t('company.email')"
-          />
-        </el-form-item>
-      </div>
       <el-button v-loading="loading" type="success" @click="submitForm('postForm')">
         {{ $t('button.save') }}
       </el-button>
@@ -236,6 +220,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-</style>

@@ -1,8 +1,8 @@
 div.card-list {
 
   .card {
-    padding: 6pt;
-    margin: 3pt;
+    // padding: 0pt;
+    // margin: 1pt;
     // width: 100%;
     // max-width: #{$card-width};
     text-align: center;
@@ -10,11 +10,11 @@ div.card-list {
   }
 
   .enabled {
-    border: 1px solid green;
+    border: 1px solid #efe;
   }
   .disabled {
-    border: 1px solid gray;
-    background-color: #eee;
+    border: 1px solid #ddd;
+    color: #666;
   }
   .filtersz .el-input {
     max-width: 150pt;
@@ -26,15 +26,12 @@ div.card-list {
   }
   .selected .el-icon-success {
     display: block;
-    position: absolute;
     color: green;
-    font-size: 24pt;
+    font-size: 14pt;
+    float: right;
   }
-  .enabled.selected {
+  .selected {
     background-color: #efe;
-  }
-  .disabled.selected {
-    background-color: #cdc;
   }
 }
 

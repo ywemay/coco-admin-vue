@@ -102,7 +102,7 @@ export const constantRoutes = [
         meta: { title: $t('route.user.create'), icon: 'form' }
       },
       {
-        path: 'edit/:id(\\d+)',
+        path: 'edit/:id([\\d\+]+)',
         name: 'EditUser',
         component: () => import('@/views/user/edit'),
         meta: { title: $t('route.user.edit'), icon: 'edit', activeMenu: '/users/list' },
@@ -113,6 +113,35 @@ export const constantRoutes = [
         name: 'UsersList',
         component: () => import('@/views/user/list'),
         meta: { title: $t('route.user.list'), icon: 'table' }
+      }
+    ]
+  },
+
+  {
+    path: '/customerprofiles',
+    component: Layout,
+    redirect: '/customerprofiles/list',
+    name: 'CustomerProfiles',
+    meta: { title: $t('route.customerprofiles'), icon: 'company' },
+    children: [
+      {
+        path: 'list',
+        name: 'CustomerProfileList',
+        component: () => import('@/views/customerprofiles/list'),
+        meta: { title: $t('route.customerprofile.list'), icon: 'table' }
+      },
+      {
+        path: 'create',
+        name: 'CreateCustomerProfile',
+        component: () => import('@/views/customerprofiles/create'),
+        meta: { title: $t('route.customerprofile.create'), icon: 'form' }
+      },
+      {
+        path: 'edit/:id([\\d\+]+)',
+        name: 'EditCustomerProfile',
+        component: () => import('@/views/customerprofiles/edit'),
+        meta: { title: $t('route.customerprofile.edit'), icon: 'edit', activeMenu: '/customerprofiles/list' },
+        hidden: true
       }
     ]
   },
