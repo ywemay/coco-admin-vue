@@ -18,6 +18,12 @@ export default {
       create: 'Create User',
       edit: 'Edit User',
       list: 'User List'
+    },
+    customerprofiles: 'Customers',
+    customerprofile: {
+      create: 'Create Customer Profile',
+      edit: 'Edit Customer Profile',
+      list: 'Customer Profile List'
     }
   },
   button: {
@@ -49,9 +55,16 @@ export default {
       company: 'Ivalid company provided'
     }
   },
+  messages: {
+    save: {
+      success: 'Successfully saved',
+      fail: 'Failed to save'
+    }
+  },
   filters: {
     username: 'Search by username',
-    role: 'Search by role'
+    role: 'Search by role',
+    company: 'Search by company name'
   },
   error: {
     userlistempty: 'Cannot find any users by given criteria.',
@@ -96,8 +109,11 @@ export default {
     phone: 'Phone number',
     enabled: 'Account Enabled'
   },
-  company: {
-    name: 'Company Name',
-    email: 'Email'
+  customerprofile: {
+    company: 'Company Name',
+    email: 'Email',
+    phone: 'Phone',
+    webpage: 'Webpage',
+    staff: 'Company staff'
   }
 }

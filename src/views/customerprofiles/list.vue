@@ -3,50 +3,32 @@
     <div v-if="error" class="error">{{ error }}</div>
     <div v-if="buttons.search" class="filters">
       <el-input
-        v-model="filters.username"
-        type="test"
-        prefix-icon="el-icon-user"
-        width="12"
-        :placeholder="$t('filters.username')"
+        v-model="filters.company"
+        type="text"
+        prefix-icon="el-icon-company"
+        :placeholder="$t('filters.company')"
       />
-      <el-select v-model="filters.roles" :placeholder="$t('filters.role')">
-        <el-option
-          v-for="item in roles"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-      <el-button v-if="filters.username !=='' || filters.roles.length > 0" class="success" @click="resetSearch">{{ $t('button.reset') }}</el-button>
-      <el-button type="success" @click="fetchData" icon="el-icon-search" :alt="$t('button.search')" />
+      <el-button class="success" @click="resetSearch">{{ $t('button.reset') }}</el-button>
+      <el-button type="success" icon="el-icon-search" :alt="$t('button.search')" @click="fetchData" />
       <el-button icon="el-icon-close" @click="buttons.search = !buttons.search" />
     </div>
     <div
+      v-for="profile in list"
       v-else
-      v-for="user in list"
-      :key="user.username"
+      :key="profile.id"
       class="card"
-      :class="compileClass(user)"
-      @click="selectUser(user.id)"
+      :class="compileClass(profile.id)"
+      @click="selectItem(profile.id)"
     >
       <div>
         <i class="el-icon-success" />
-        <el-image class="avatar">
-          <div slot="error" class="image-slot">
-            <i class="el-icon-user" />
-          </div>
-        </el-image>
-        <div class="username">{{ user.username }}</div>
+        <div class="company">{{ profile.company }}</div>
         <div class="details">
-          <i v-if="user.enabled" class="el-icon-check" />
-          <i v-else class="el-icon-close" />
-          <i v-for="role in user.plainRoles" :key="role">
-            {{ role }}
-          </i>
+          <div>{{ profile.phones.join(', ') }}</div>
+          <div>{{ profile.emails.join(', ') }}</div>
+          <div>{{ profile.physicalAddresses.length }}</div>
         </div>
       </div>
-      <div v-if="user.company" class="user-company">
-        <i class="el-icon-office-building" /> {{ user.company.name }}</div>
     </div>
     <div class="action-bar">
       <template v-if="selectedItems.length > 0">
@@ -79,26 +61,21 @@
 
 <script>
 
-import { getList } from '@/api/user'
+import { getList } from '@/api/customerprofiles'
 
 export default {
-  name: 'UserList',
+  name: 'CustomerProfileList',
   data() {
     return {
       list: [],
       filters: {
-        username: '',
-        roles: ''
+        company: '',
+        phone: '',
+        email: ''
       },
       buttons: {
         search: false
       },
-      roles: [
-        { value: 'ROLE_ADMIN', label: this.$t('user.admin') },
-        { value: 'ROLE_CUSTOMER', label: this.$t('user.customer') },
-        { value: 'ROLE_TEAMLEADER', label: this.$t('user.teamleader') },
-        { value: 'ROLE_WORKER', label: this.$t('user.worker') }
-      ],
       totalItems: 0,
       listLoading: false,
       pageSize: 30,
@@ -117,11 +94,11 @@ export default {
       var query = {
         page: this.currentPage
       }
-      if (this.filters.username) {
-        query.username = this.filters.username
+      if (this.filters.company) {
+        query.company = this.filters.company
       }
-      if (this.filters.roles) {
-        query.roles = this.filters.roles
+      if (this.filters.phone) {
+        query.phones = this.filters.phone
       }
       getList(query).then(response => {
         this.list = response.data['hydra:member']
@@ -132,13 +109,20 @@ export default {
         this.list = []
         this.totalItems = 0
         this.listLoading = false
-        this.error = this.$t('error.userlistempty')
+        this.error = this.$t('error.listempty')
         this.buttons.search = false
       })
     },
+    compileClass(anId) {
+      return this.selectedItems.indexOf(anId) > -1 ? ' selected' : ''
+    },
     resetSearch() {
-      this.filters.username = ''
-      this.filters.roles = []
+      this.filters = {
+        company: '',
+        phone: '',
+        email: '',
+        address: ''
+      }
       this.fetchData()
       this.buttons.search = false
     },
@@ -146,7 +130,7 @@ export default {
       this.currentPage = val
       this.fetchData()
     },
-    selectUser(anId) {
+    selectItem(anId) {
       if (this.selectedItems.indexOf(anId) === -1) {
         this.selectedItems.push(anId)
       } else {
@@ -155,13 +139,8 @@ export default {
         })
       }
     },
-    compileClass(user) {
-      var res = user.enabled ? 'enabled' : 'disabled'
-      res += this.selectedItems.indexOf(user.id) > -1 ? ' selected' : ''
-      return res
-    },
     editItems() {
-      this.$router.push('/users/edit/' + this.selectedItems.join('+'))
+      this.$router.push('/customerprofiles/edit/' + this.selectedItems.join('+'))
     }
   }
 }
@@ -174,12 +153,18 @@ $card-width: 220pt;
   .avatar {
     float: left;
     width: 30pt;
-    height: 30pt;
     color: #ddd;
     background: #eee;
     font-size: 20pt;
   }
   .details {
     font-size: 70%;
+  }
+
+  div.card-list .card {
+    margin: 2pt 3pt;
+    padding: 3pt;
+    border: 1px solid #ddd;
+    box-shadow: 2pt 2pt 5pt #ccc;
   }
 </style>

@@ -1,0 +1,60 @@
+div.card-list {
+
+  .card {
+    // padding: 0pt;
+    // margin: 1pt;
+    // width: 100%;
+    // max-width: #{$card-width};
+    text-align: center;
+    display: inline-block;
+  }
+
+  .enabled {
+    border: 1px solid #efe;
+  }
+  .disabled {
+    border: 1px solid #ddd;
+    color: #666;
+  }
+  .filtersz .el-input {
+    max-width: 150pt;
+    display: inline-block;
+  }
+
+  .el-icon-success {
+    display: none;
+  }
+  .selected .el-icon-success {
+    display: block;
+    color: green;
+    font-size: 14pt;
+    float: right;
+  }
+  .selected {
+    background-color: #efe;
+  }
+}
+
+@media (min-width: 601px) {
+  .card {
+    width: 48%;
+  }
+}
+@media (max-width: 600px) {
+  .card {
+    width: 100%;
+  }
+}
+@media (min-width: 900px) {
+  .card {
+    width: 24%;
+  }
+}
+
+.action-bar {
+  bottom: 5pt;
+  position: fixed;
+}
+.card-list {
+  margin-bottom: 40pt;
+}
