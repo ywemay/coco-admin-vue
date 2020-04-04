@@ -5,7 +5,7 @@ import i18n from '@/lang' // internationalization
 Vue.use(Router)
 
 i18n.locale = 'en'
-function $t (key, value) {
+function $t(key, value) {
   return i18n.t(key, value)
 }
 
@@ -122,7 +122,7 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/customerprofiles/list',
     name: 'CustomerProfiles',
-    meta: { title: $t('route.customerprofiles'), icon: 'company' },
+    meta: { title: $t('route.customerprofiles'), icon: 'tree' },
     children: [
       {
         path: 'list',

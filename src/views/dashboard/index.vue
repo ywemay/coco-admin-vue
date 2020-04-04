@@ -1,10 +1,10 @@
 <template>
   <div class="dashboard-container">
-      <div v-for="link in links" :key="link.uri" class="button-container">
-        <router-link :to="link.uri">
-          <el-button>{{ link.title }}</el-button>
-        </router-link>
-      </div>
+    <div v-for="link in links" :key="link.uri" class="button-container">
+      <router-link :to="link.uri">
+        <el-button>{{ link.title }}</el-button>
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -17,6 +17,7 @@ export default {
     return {
       links: [
         { uri: '/users/list', title: 'Users' },
+        { uri: '/customerprofiles/list', title: 'Customer Profiles' },
         { uri: '/sale/orders', title: 'Sale Orders (Customer Orders)' },
         { uri: '/clorders/list', title: 'Container Load Orders' }
       ]

@@ -9,12 +9,12 @@
         :placeholder="$t('filters.company')"
       />
       <el-button class="success" @click="resetSearch">{{ $t('button.reset') }}</el-button>
-      <el-button type="success" @click="fetchData" icon="el-icon-search" :alt="$t('button.search')" />
+      <el-button type="success" icon="el-icon-search" :alt="$t('button.search')" @click="fetchData" />
       <el-button icon="el-icon-close" @click="buttons.search = !buttons.search" />
     </div>
     <div
-      v-else
       v-for="profile in list"
+      v-else
       :key="profile.id"
       class="card"
       :class="compileClass(profile.id)"
@@ -24,8 +24,8 @@
         <i class="el-icon-success" />
         <div class="company">{{ profile.company }}</div>
         <div class="details">
-          <div>{{ profile.phones.join(', ')}}</div>
-          <div>{{ profile.emails.join(', ')}}</div>
+          <div>{{ profile.phones.join(', ') }}</div>
+          <div>{{ profile.emails.join(', ') }}</div>
           <div>{{ profile.physicalAddresses.length }}</div>
         </div>
       </div>

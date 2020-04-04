@@ -1,12 +1,11 @@
 <template>
   <div class="customer-profile-editor-container">
-    <h3 v-if="isEdit">Edit Company {{ postForm.company }}</h3>
-    <h3 else>{{ $t('route.customerprofile.create') }}</h3>
+    <h3>{{ isEdit ? 'Edit company ' + postForm.company : 'Create new company' }}</h3>
     <el-form
       ref="postForm"
       :model="postForm"
       :rules="rules"
-      class="form-container"
+      class="edit-form-container"
       @submit.prevent
     >
       <el-form-item prop="company" class="responsive-width">
@@ -34,10 +33,14 @@
             prefix-icon="el-icon-mobile"
             :placeholder="$t('customerprofile.phone')"
           >
-            <el-button slot="append" icon="el-icon-remove" @click="postForm.phones.splice(index, 1)"/>
+            <el-button
+              slot="append"
+              icon="el-icon-remove"
+              @click="postForm.phones.splice(index, 1)"
+            />
           </el-input>
         </div>
-        <el-button icon="el-icon-circle-plus" @click="postForm.phones.push('')"/>
+        <el-button icon="el-icon-circle-plus" @click="postForm.phones.push('')" />
       </el-form-item>
       <el-form-item prop="emails">
         <div
@@ -50,10 +53,13 @@
             prefix-icon="el-icon-message"
             :placeholder="$t('customerprofile.email')"
           >
-            <el-button slot="append" icon="el-icon-remove" @click="postForm.emails.splice(index, 1)"/>
+            <el-button slot="append" icon="el-icon-remove" @click="postForm.emails.splice(index, 1)" />
           </el-input>
         </div>
-        <el-button icon="el-icon-circle-plus" @click="postForm.emails.push('')"/>
+        <el-button
+          icon="el-icon-circle-plus"
+          @click="postForm.emails.push('')"
+        />
       </el-form-item>
       <el-form-item prop="staff">
         <el-select
@@ -70,8 +76,8 @@
             v-for="item in customerOptions"
             :key="item.id"
             :label="item.username"
-            :value="item['@id']">
-          </el-option>
+            :value="item['@id']"
+          />
         </el-select>
       </el-form-item>
       <el-button v-loading="loading" type="success" icon="el-icon-upload2" @click="submitForm('postForm')">
@@ -131,13 +137,13 @@ export default {
         if (response.status === 200) {
           var data = response.data
           this.customerOptions = data.staff
-          var i, staff = []
+          var i
+          var staff = []
           for (i in data.staff) {
             staff.push(data.staff[i]['@id'])
           }
           data.staff = staff
           this.postForm = data
-
         }
       }).catch(err => {
         this.$notify({
@@ -150,8 +156,8 @@ export default {
     },
     loadCustomers(query) {
       if (query !== '') {
-        getUsers({username: query, roles: 'ROLE_CUSTOMER'}).then(response => {
-          if (response.status == 200) {
+        getUsers({ username: query, roles: 'ROLE_CUSTOMER' }).then(response => {
+          if (response.status === 200) {
             this.customerOptions = response.data['hydra:member']
           }
         }).catch(err => {

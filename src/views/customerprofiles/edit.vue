@@ -1,7 +1,7 @@
 <template>
   <div class="edit-forms-list">
     <div v-for="iid in itemIds" :key="iid" class="edit-form-container">
-      <editor :itemId="parseInt(iid)" :is-edit="true" />
+      <editor :item-id="parseInt(iid)" :is-edit="true" />
     </div>
   </div>
 </template>
@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     loadData() {
-      this.itemIds = this.$route.params.id.split("+")
+      this.itemIds = this.$route.params.id.split('+')
     }
   }
 }
