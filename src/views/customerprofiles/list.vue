@@ -61,7 +61,7 @@
 
 <script>
 
-import { getList } from '@/api/customerprofiles'
+import { getList, deleteItem } from '@/api/customerprofiles'
 
 export default {
   name: 'CustomerProfileList',
@@ -81,7 +81,9 @@ export default {
       pageSize: 30,
       currentPage: 1,
       error: false,
-      selectedItems: []
+      selectedItems: [],
+      removingIds: [],
+      removingFailIds: []
     }
   },
   created() {
@@ -141,6 +143,30 @@ export default {
     },
     editItems() {
       this.$router.push('/customerprofiles/edit/' + this.selectedItems.join('+'))
+    },
+    deleteItems() {
+      if (this.selectedItems.length < 1) return
+      this.removingFailIds = []
+      for(var i in this.selectedItems) {
+        var anId = this.selectedItems[i]
+        this.removingIds.push(anId)
+        deleteItem(this.selectedItems[i]).then(response => {
+          this.removingIds.filter((val) => {
+            val == anId
+          })
+        }).catch(() => {
+          this.removingIds.filter((val) => {
+            val == anId
+          })
+          this.removingFailIds.push(anId)
+        })
+      }
+    },
+    calculateRemovePercent() {
+      if (this.selectedItems.length < 1) return 100 
+      var totalItems = this.selectedItems.length
+      var processedItems = totalItems - this.removingIds.length - this.removingFailIds.length
+      return parseInt(processedItems*100/totalItems)
     }
   }
 }
