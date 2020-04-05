@@ -34,6 +34,6 @@ export function updateItem(id, data) {
 export function deleteItem(id) {
   return request({
     url: '/customer_profiles/' + id,
-    methos: 'delete'
+    method: 'delete'
   })
 }

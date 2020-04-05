@@ -31,6 +31,7 @@
       </div>
     </div>
     <div class="action-bar">
+      <el-progress v-if="removing.items.length > 0" :percentage="removing.percent" />
       <template v-if="selectedItems.length > 0">
         <el-button
           v-if="selectedItems.length < 10"
@@ -38,7 +39,7 @@
           icon="el-icon-edit"
           @click="editItems()"
         />
-        <el-button type="danger" icon="el-icon-delete" />
+        <el-button type="danger" icon="el-icon-delete" @click="deleteItems()" />
         <el-button icon="el-icon-check" />
         <el-badge :value="selectedItems.length" class="item" type="primary">
           <el-button icon="el-icon-close" @click="selectedItems = []" />
@@ -82,8 +83,14 @@ export default {
       currentPage: 1,
       error: false,
       selectedItems: [],
-      removingIds: [],
-      removingFailIds: []
+      removing: {
+        items: [],
+        done: [],
+        fail: [],
+        complete: true,
+        percent: 0
+      }
+
     }
   },
   created() {
@@ -146,27 +153,37 @@ export default {
     },
     deleteItems() {
       if (this.selectedItems.length < 1) return
-      this.removingFailIds = []
-      for(var i in this.selectedItems) {
-        var anId = this.selectedItems[i]
-        this.removingIds.push(anId)
+      this.removing = {
+        items: this.selectedItems,
+        done: [],
+        fail: [],
+        complete: false,
+        percent: 0
+      }
+      for(var i in this.removing.items) {
+        var anId = this.removing.items[i]
         deleteItem(this.selectedItems[i]).then(response => {
-          this.removingIds.filter((val) => {
-            val == anId
-          })
+          console.log(response)
+          if (response.status === 200) {
+
+          }
+          this.removing.done.push(anId)
+          this.calculateRemovePercent()
         }).catch(() => {
-          this.removingIds.filter((val) => {
-            val == anId
-          })
-          this.removingFailIds.push(anId)
+          this.removing.fail.push(anId)
+          this.calculateRemovePercent()
         })
       }
     },
     calculateRemovePercent() {
-      if (this.selectedItems.length < 1) return 100 
-      var totalItems = this.selectedItems.length
-      var processedItems = totalItems - this.removingIds.length - this.removingFailIds.length
-      return parseInt(processedItems*100/totalItems)
+      if (this.removing.items.length < 1) return -1
+      var totalItems = this.removing.items.length
+      var processedItems = this.removing.done.length + this.removing.fail.length
+      if (totalItems === processedItems) {
+        this.removing.complete = true
+        this.fetchData()
+      }
+      this.removing.percent = parseInt(processedItems*100/totalItems)
     }
   }
 }
