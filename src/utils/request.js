@@ -50,7 +50,7 @@ service.interceptors.response.use(
   response => {
     const res = response.data
 
-    if (response.status === 200 || response.status === 201) {
+    if (response.status >= 200 && response.status < 300) {
       return response
     }
 

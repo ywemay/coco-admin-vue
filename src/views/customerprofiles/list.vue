@@ -161,19 +161,21 @@ export default {
         percent: 0
       }
       for(var i in this.removing.items) {
-        var anId = this.removing.items[i]
-        deleteItem(this.selectedItems[i]).then(response => {
-          console.log(response)
-          if (response.status === 200) {
-
-          }
-          this.removing.done.push(anId)
-          this.calculateRemovePercent()
-        }).catch(() => {
-          this.removing.fail.push(anId)
-          this.calculateRemovePercent()
-        })
+        this.requestRemoveItem(this.removing.items[i])
       }
+    },
+    requestRemoveItem(anId) {
+      deleteItem(anId).then(response => {
+        if (response.status === 204) {
+          this.removing.done.push(anId)
+        } else {
+          this.removing.fail.push(anId)
+        }
+        this.calculateRemovePercent()
+      }).catch(() => {
+        this.removing.fail.push(anId)
+        this.calculateRemovePercent()
+      })
     },
     calculateRemovePercent() {
       if (this.removing.items.length < 1) return -1
@@ -181,9 +183,31 @@ export default {
       var processedItems = this.removing.done.length + this.removing.fail.length
       if (totalItems === processedItems) {
         this.removing.complete = true
+        this.notifyRemoveResults()
+        this.removing.items = []
         this.fetchData()
       }
       this.removing.percent = parseInt(processedItems*100/totalItems)
+    },
+    notifyRemoveResults() {
+      this.selectedItems = []
+      if (this.removing.fail.length > 0) {
+        this.$notify({
+          title: this.$t('message.save'),
+          message: this.$t('messages.delete.fail', { count: this.removing.fail.length }),
+          type: 'error',
+          duration: 2000
+        })
+        this.selectedItems = this.removing.fail
+      }
+      if (this.removing.done.length > 0) {
+        this.$notify({
+          title: this.$t('message.delete'),
+          message: this.$t('messages.delete.success', { count: this.removing.done.length }),
+          type: 'success',
+          duration: 2000
+        })
+      }
     }
   }
 }

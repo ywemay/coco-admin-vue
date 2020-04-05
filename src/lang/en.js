@@ -53,12 +53,18 @@ export default {
       required: 'The field is required',
       date: 'Input a valid date',
       company: 'Ivalid company provided'
-    }
+    },
+    save: 'Save',
+    delete: 'Delete'
   },
   messages: {
     save: {
       success: 'Successfully saved',
       fail: 'Failed to save'
+    },
+    delete: {
+      success: 'Successfully deleted {count} records',
+      fail: 'Failed to delete {count} records'
     }
   },
   filters: {
