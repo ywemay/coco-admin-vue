@@ -27,6 +27,7 @@ export default {
     }
   },
   button: {
+    ok: 'OK',
     save: 'Save',
     cancel: 'Cancel',
     edit: 'Edit',
@@ -55,7 +56,12 @@ export default {
       company: 'Ivalid company provided'
     },
     save: 'Save',
-    delete: 'Delete'
+    delete: 'Delete',
+    warning: 'Warning',
+    load: 'Load',
+    warn: {
+      delete: 'This will permanently delete {count} items. Continue?'
+    }
   },
   messages: {
     save: {

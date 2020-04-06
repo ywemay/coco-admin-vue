@@ -25,7 +25,7 @@ export default {
   props: {
     ids: {
       type: Array,
-      default: []
+      default: () => { return [] }
     },
     path: {
       type: String,
@@ -42,7 +42,7 @@ export default {
   },
   data() {
     return {
-      items: [], //processing items
+      items: [], // processing items
       done: [],
       fail: [],
       complete: false,
@@ -56,15 +56,23 @@ export default {
     deleteItems() {
       if (this.ids.length < 1) return
 
-      this.items = this.ids
-      this.done = []
-      this.fail = []
-      this.complete = false,
-      this.percent = 0
+      this.$confirm(this.$t('message.warn.delete', { count: this.ids.length }), this.$t('message.warning'), {
+        confirmButtonText: this.$t('button.ok'),
+        cancelButtonText: this.$t('button.cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.items = this.ids
+        this.done = []
+        this.fail = []
+        this.complete = false
+        this.percent = 0
 
-      for(var i in this.items) {
-        this.requestRemoveItem(this.items[i])
-      }
+        for (var i in this.items) {
+          this.requestRemoveItem(this.items[i])
+        }
+      }).catch(() => {
+        this.complete = false
+      })
     },
     requestRemoveItem(anId) {
       this.deleteCallback(anId).then(response => {
@@ -89,7 +97,7 @@ export default {
         this.items = []
         this.$emit('complete')
       }
-      this.percent = parseInt(processedItems*100/totalItems)
+      this.percent = parseInt(processedItems * 100 / totalItems)
     },
     notifyRemoveResults() {
       if (this.fail.length > 0) {
@@ -100,8 +108,7 @@ export default {
           duration: 4000
         })
         this.$emit('set-selection', this.fail)
-      }
-      else {
+      } else {
         this.$emit('cancel-selection')
       }
       if (this.done.length > 0) {

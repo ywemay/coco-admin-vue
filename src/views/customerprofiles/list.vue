@@ -42,7 +42,7 @@
     <list-actions
       :ids="selectedItems"
       :delete-callback="deleteCallback"
-      :search = "buttons.search"
+      :search="buttons.search"
       @cancel-selection="selectedItems = []"
       @set-selection="selectedItems = $event "
       @edit="$router.push('/customerprofiles/edit/' + $event)"
@@ -55,7 +55,7 @@
 <script>
 
 import { getList, deleteItem } from '@/api/customerprofiles'
-import ListActions  from '@/components/listActions'
+import ListActions from '@/components/listActions'
 
 export default {
   name: 'CustomerProfileList',

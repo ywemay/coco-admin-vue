@@ -159,10 +159,14 @@ export default {
           this.postForm.roles = response.data.plainRoles
           this.postForm.enabled = response.data.enabled
           this.postForm.company.name = data.company ? data.company.name : ''
-          console.log(response.data)
         }
       }).catch(err => {
-        console.log(err)
+        this.$notify({
+          title: this.$t('message.load'),
+          message: err,
+          type: 'error',
+          duration: 2000
+        })
       })
     },
     checkIsCustomer(item) {

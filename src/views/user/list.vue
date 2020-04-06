@@ -17,67 +17,51 @@
           :value="item.value"
         />
       </el-select>
-      <el-button type="success" @click="fetchData" icon="el-icon-search" :alt="$t('button.search')" />
+      <el-button type="success" icon="el-icon-search" :alt="$t('button.search')" @click="fetchData" />
       <el-button icon="el-icon-close" @click="buttons.search = !buttons.search" />
     </div>
     <el-button v-if="filters.username !=='' || filters.roles.length > 0" class="success" @click="resetSearch">{{ $t('button.reset') }}</el-button>
-    <div
-      v-if="!buttons.search"
-      v-for="user in list"
-      :key="user.username"
-      class="card"
-      :class="compileClass(user)"
-      @click="selectUser(user.id)"
-    >
-      <div>
-        <i class="el-icon-success" />
-        <el-image class="avatar">
-          <div slot="error" class="image-slot">
-            <i class="el-icon-user" />
+    <div v-if="!buttons.search">
+      <div
+        v-for="user in list"
+        :key="user.username"
+        class="card"
+        :class="compileClass(user)"
+        @click="selectUser(user.id)"
+      >
+        <div>
+          <i class="el-icon-success" />
+          <el-image class="avatar">
+            <div slot="error" class="image-slot">
+              <i class="el-icon-user" />
+            </div>
+          </el-image>
+          <div class="username">{{ user.username }}</div>
+          <div class="details">
+            <i v-if="user.enabled" class="el-icon-check" />
+            <i v-else class="el-icon-close" />
+            <i v-for="role in user.plainRoles" :key="role">
+              {{ role }}
+            </i>
           </div>
-        </el-image>
-        <div class="username">{{ user.username }}</div>
-        <div class="details">
-          <i v-if="user.enabled" class="el-icon-check" />
-          <i v-else class="el-icon-close" />
-          <i v-for="role in user.plainRoles" :key="role">
-            {{ role }}
-          </i>
         </div>
+        <div v-if="user.company" class="user-company">
+          <i class="el-icon-office-building" /> {{ user.company.name }}</div>
       </div>
-      <div v-if="user.company" class="user-company">
-        <i class="el-icon-office-building" /> {{ user.company.name }}</div>
+      <el-pagination
+        v-if="totalItems > pageSize && !buttons.search"
+        background
+        layout="prev, pager, next"
+        :page-size="pageSize"
+        :total="totalItems"
+        @current-change="handleCurrentChange"
+      />
+      <el-backtop taget=".users-list" />
     </div>
-    <!---div class="action-bar">
-      <template v-if="selectedItems.length > 0">
-        <el-button
-          v-if="selectedItems.length < 10"
-          type="primary"
-          icon="el-icon-edit"
-          @click="editItems()"
-        />
-        <el-button type="danger" icon="el-icon-delete" />
-        <el-button icon="el-icon-check" />
-        <el-badge :value="selectedItems.length" class="item" type="primary">
-          <el-button icon="el-icon-close" @click="selectedItems = []" />
-        </el-badge>
-      </template>
-      <el-button v-if="!buttons.search" type="primary" icon="el-icon-search" @click="buttons.search = !buttons.search" />
-    </div-->
-
-    <el-pagination
-      v-if="totalItems > pageSize && !buttons.search"
-      background
-      layout="prev, pager, next"
-      :page-size="pageSize"
-      :total="totalItems"
-      @current-change="handleCurrentChange"
-    />
-    <el-backtop taget=".users-list" />
     <list-actions
       :ids="selectedItems"
       :delete-callback="deleteCallback"
-      :search = "buttons.search"
+      :search="buttons.search"
       @cancel-selection="selectedItems = []"
       @set-selection="selectedItems = $event "
       @edit="$router.push('/users/edit/' + $event)"
@@ -90,7 +74,7 @@
 <script>
 
 import { getList, deleteUser } from '@/api/user'
-import ListActions  from '@/components/listActions'
+import ListActions from '@/components/listActions'
 
 export default {
   name: 'UserList',
