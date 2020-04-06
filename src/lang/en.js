@@ -75,7 +75,8 @@ export default {
   error: {
     userlistempty: 'Cannot find any users by given criteria.',
     clorderlistempty: 'No container load orders found by given criteria',
-    savefail: 'Failed to save'
+    savefail: 'Failed to save',
+    listempty: 'The list is empty'
   },
   order: {
     startDateTime: 'Start Date Time',

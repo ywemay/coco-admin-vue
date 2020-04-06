@@ -17,12 +17,12 @@
           :value="item.value"
         />
       </el-select>
-      <el-button v-if="filters.username !=='' || filters.roles.length > 0" class="success" @click="resetSearch">{{ $t('button.reset') }}</el-button>
       <el-button type="success" @click="fetchData" icon="el-icon-search" :alt="$t('button.search')" />
       <el-button icon="el-icon-close" @click="buttons.search = !buttons.search" />
     </div>
+    <el-button v-if="filters.username !=='' || filters.roles.length > 0" class="success" @click="resetSearch">{{ $t('button.reset') }}</el-button>
     <div
-      v-else
+      v-if="!buttons.search"
       v-for="user in list"
       :key="user.username"
       class="card"
@@ -48,7 +48,7 @@
       <div v-if="user.company" class="user-company">
         <i class="el-icon-office-building" /> {{ user.company.name }}</div>
     </div>
-    <div class="action-bar">
+    <!---div class="action-bar">
       <template v-if="selectedItems.length > 0">
         <el-button
           v-if="selectedItems.length < 10"
@@ -63,7 +63,7 @@
         </el-badge>
       </template>
       <el-button v-if="!buttons.search" type="primary" icon="el-icon-search" @click="buttons.search = !buttons.search" />
-    </div>
+    </div-->
 
     <el-pagination
       v-if="totalItems > pageSize && !buttons.search"
@@ -74,17 +74,30 @@
       @current-change="handleCurrentChange"
     />
     <el-backtop taget=".users-list" />
+    <list-actions
+      :ids="selectedItems"
+      :delete-callback="deleteCallback"
+      :search = "buttons.search"
+      @cancel-selection="selectedItems = []"
+      @set-selection="selectedItems = $event "
+      @edit="$router.push('/users/edit/' + $event)"
+      @search="buttons.search = !buttons.search"
+      @complete="fetchData()"
+    />
   </div>
 </template>
 
 <script>
 
-import { getList } from '@/api/user'
+import { getList, deleteUser } from '@/api/user'
+import ListActions  from '@/components/listActions'
 
 export default {
   name: 'UserList',
+  components: { ListActions },
   data() {
     return {
+      deleteCallback: deleteUser,
       list: [],
       filters: {
         username: '',
@@ -159,9 +172,6 @@ export default {
       var res = user.enabled ? 'enabled' : 'disabled'
       res += this.selectedItems.indexOf(user.id) > -1 ? ' selected' : ''
       return res
-    },
-    editItems() {
-      this.$router.push('/users/edit/' + this.selectedItems.join('+'))
     }
   }
 }

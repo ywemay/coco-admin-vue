@@ -30,24 +30,6 @@
         </div>
       </div>
     </div>
-    <div class="action-bar">
-      <el-progress v-if="removing.items.length > 0" :percentage="removing.percent" />
-      <template v-if="selectedItems.length > 0">
-        <el-button
-          v-if="selectedItems.length < 10"
-          type="primary"
-          icon="el-icon-edit"
-          @click="editItems()"
-        />
-        <el-button type="danger" icon="el-icon-delete" @click="deleteItems()" />
-        <el-button icon="el-icon-check" />
-        <el-badge :value="selectedItems.length" class="item" type="primary">
-          <el-button icon="el-icon-close" @click="selectedItems = []" />
-        </el-badge>
-      </template>
-      <el-button v-if="!buttons.search" type="primary" icon="el-icon-search" @click="buttons.search = !buttons.search" />
-    </div>
-
     <el-pagination
       v-if="totalItems > pageSize && !buttons.search"
       background
@@ -57,15 +39,27 @@
       @current-change="handleCurrentChange"
     />
     <el-backtop taget=".users-list" />
+    <list-actions
+      :ids="selectedItems"
+      :delete-callback="deleteCallback"
+      :search = "buttons.search"
+      @cancel-selection="selectedItems = []"
+      @set-selection="selectedItems = $event "
+      @edit="$router.push('/customerprofiles/edit/' + $event)"
+      @search="buttons.search = !buttons.search"
+      @complete="fetchData()"
+    />
   </div>
 </template>
 
 <script>
 
 import { getList, deleteItem } from '@/api/customerprofiles'
+import ListActions  from '@/components/listActions'
 
 export default {
   name: 'CustomerProfileList',
+  components: { ListActions },
   data() {
     return {
       list: [],
@@ -83,14 +77,7 @@ export default {
       currentPage: 1,
       error: false,
       selectedItems: [],
-      removing: {
-        items: [],
-        done: [],
-        fail: [],
-        complete: true,
-        percent: 0
-      }
-
+      deleteCallback: deleteItem
     }
   },
   created() {
@@ -145,67 +132,6 @@ export default {
       } else {
         this.selectedItems = this.selectedItems.filter(val => {
           return val !== anId
-        })
-      }
-    },
-    editItems() {
-      this.$router.push('/customerprofiles/edit/' + this.selectedItems.join('+'))
-    },
-    deleteItems() {
-      if (this.selectedItems.length < 1) return
-      this.removing = {
-        items: this.selectedItems,
-        done: [],
-        fail: [],
-        complete: false,
-        percent: 0
-      }
-      for(var i in this.removing.items) {
-        this.requestRemoveItem(this.removing.items[i])
-      }
-    },
-    requestRemoveItem(anId) {
-      deleteItem(anId).then(response => {
-        if (response.status === 204) {
-          this.removing.done.push(anId)
-        } else {
-          this.removing.fail.push(anId)
-        }
-        this.calculateRemovePercent()
-      }).catch(() => {
-        this.removing.fail.push(anId)
-        this.calculateRemovePercent()
-      })
-    },
-    calculateRemovePercent() {
-      if (this.removing.items.length < 1) return -1
-      var totalItems = this.removing.items.length
-      var processedItems = this.removing.done.length + this.removing.fail.length
-      if (totalItems === processedItems) {
-        this.removing.complete = true
-        this.notifyRemoveResults()
-        this.removing.items = []
-        this.fetchData()
-      }
-      this.removing.percent = parseInt(processedItems*100/totalItems)
-    },
-    notifyRemoveResults() {
-      this.selectedItems = []
-      if (this.removing.fail.length > 0) {
-        this.$notify({
-          title: this.$t('message.save'),
-          message: this.$t('messages.delete.fail', { count: this.removing.fail.length }),
-          type: 'error',
-          duration: 2000
-        })
-        this.selectedItems = this.removing.fail
-      }
-      if (this.removing.done.length > 0) {
-        this.$notify({
-          title: this.$t('message.delete'),
-          message: this.$t('messages.delete.success', { count: this.removing.done.length }),
-          type: 'success',
-          duration: 2000
         })
       }
     }
