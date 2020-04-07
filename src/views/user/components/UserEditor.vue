@@ -92,6 +92,7 @@ export default {
         callback()
       }
     }
+
     var validatePass2 = (rule, value, callback) => {
       if (this.postForm.password !== '' && value === '') {
         callback(new Error(this.$t('message.password.repeatnull')))
@@ -103,7 +104,7 @@ export default {
     }
 
     var validatePhone = (rule, value, callback) => {
-      if (!value.match(/\+?[\d \-]{8,12}/)) {
+      if (value && !value.match(/\+?[\d \-]{8,12}/)) {
         callback(new Error(this.$t('message.phone.notnull')))
       } else {
         callback()
@@ -155,10 +156,9 @@ export default {
       getUser(uid).then(response => {
         if (response.status === 200) {
           var data = response.data
-          this.postForm.username = response.data.username
-          this.postForm.roles = response.data.plainRoles
-          this.postForm.enabled = response.data.enabled
-          this.postForm.company.name = data.company ? data.company.name : ''
+          this.postForm.username = data.username
+          this.postForm.roles = data.roles
+          this.postForm.enabled = data.enabled
         }
       }).catch(err => {
         this.$notify({
@@ -169,21 +169,18 @@ export default {
         })
       })
     },
-    checkIsCustomer(item) {
-      return item === 'customer'
-    },
-    notifyResult(response) {
-      if (response.status === 201) {
+    notifyResult(response, rezCode = 201) {
+      if (response.status === rezCode ) {
         this.$notify({
           title: this.$t('message.save'),
-          message: this.$t('saved.successfully'),
+          message: this.$t('messages.save.success'),
           type: 'success',
           duration: 2000
         })
       } else {
         this.$notify({
           title: this.$t('message.save'),
-          message: this.$t('error.savefail'),
+          message: this.$t('messages.save.fail'),
           type: 'error',
           duration: 2000
         })
@@ -194,15 +191,16 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.loading = true
-          var json = []
           if (this.isEdit) {
-            updateUser(this.$route.params.id, json).then(response => {
-              this.notifyResult(response)
+            console.log(this.postForm)
+            updateUser(this.userId, this.postForm).then(response => {
+              this.notifyResult(response, 200)
+              this.loading = false
             }).catch(() => {
               this.loading = false
             })
           } else {
-            createUser(json).then(response => {
+            createUser(this.postForm).then(response => {
               this.notifyResult(response)
             }).catch(() => {
               this.laoding = false
@@ -213,12 +211,6 @@ export default {
           console.log('Error submiting user form!!!')
           return false
         }
-      })
-    },
-    onCancel() {
-      this.$message({
-        message: 'cancel!',
-        type: 'warning'
       })
     }
   }

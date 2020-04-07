@@ -56,7 +56,7 @@ export default {
     deleteItems() {
       if (this.ids.length < 1) return
 
-      this.$confirm(this.$t('message.warn.delete', { count: this.ids.length }), this.$t('message.warning'), {
+      this.$confirm(this.$t('messages.warn.delete', { count: this.ids.length }), this.$t('message.warning'), {
         confirmButtonText: this.$t('button.ok'),
         cancelButtonText: this.$t('button.cancel'),
         type: 'warning'

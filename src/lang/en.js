@@ -58,10 +58,7 @@ export default {
     save: 'Save',
     delete: 'Delete',
     warning: 'Warning',
-    load: 'Load',
-    warn: {
-      delete: 'This will permanently delete {count} items. Continue?'
-    }
+    load: 'Load'
   },
   messages: {
     save: {
@@ -71,6 +68,9 @@ export default {
     delete: {
       success: 'Successfully deleted {count} records',
       fail: 'Failed to delete {count} records'
+    },
+    warn: {
+      delete: 'This will permanently delete {count} items. Continue?'
     }
   },
   filters: {

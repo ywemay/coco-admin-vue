@@ -33,14 +33,14 @@
           <i class="el-icon-success" />
           <el-image class="avatar">
             <div slot="error" class="image-slot">
-              <i class="el-icon-user" />
+              <i class="el-icon-user-solid" />
             </div>
           </el-image>
           <div class="username">{{ user.username }}</div>
           <div class="details">
             <i v-if="user.enabled" class="el-icon-check" />
             <i v-else class="el-icon-close" />
-            <i v-for="role in user.plainRoles" :key="role">
+            <i v-for="role in user.roles" :key="role">
               {{ role }}
             </i>
           </div>
@@ -91,10 +91,10 @@ export default {
         search: false
       },
       roles: [
-        { value: 'ROLE_ADMIN', label: this.$t('user.admin') },
-        { value: 'ROLE_CUSTOMER', label: this.$t('user.customer') },
-        { value: 'ROLE_TEAMLEADER', label: this.$t('user.teamleader') },
-        { value: 'ROLE_WORKER', label: this.$t('user.worker') }
+        { value: 'admin', label: this.$t('user.admin') },
+        { value: 'customer', label: this.$t('user.customer') },
+        { value: 'teamleader', label: this.$t('user.teamleader') },
+        { value: 'worker', label: this.$t('user.worker') }
       ],
       totalItems: 0,
       listLoading: false,

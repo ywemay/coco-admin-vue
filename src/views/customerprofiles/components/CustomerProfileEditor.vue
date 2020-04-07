@@ -5,7 +5,7 @@
       ref="postForm"
       :model="postForm"
       :rules="rules"
-      class="edit-form-container"
+      class="edit-form"
       @submit.prevent
     >
       <el-form-item prop="company" class="responsive-width">
@@ -232,7 +232,7 @@ export default {
   .form-element-item {
     padding: 1pt;
   }
-  .edit-form-container {
+  .customer-profile-editor-container {
     margin: 6pt 0px;
     padding: 7pt 6pt;
     border: 1px solid #ccc;
