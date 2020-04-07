@@ -64,6 +64,7 @@
       :search="buttons.search"
       @cancel-selection="selectedItems = []"
       @set-selection="selectedItems = $event "
+      @new="createNew()"
       @edit="$router.push('/users/edit/' + $event)"
       @search="buttons.search = !buttons.search"
       @complete="fetchData()"
@@ -131,6 +132,14 @@ export default {
         this.listLoading = false
         this.error = this.$t('error.userlistempty')
         this.buttons.search = false
+      })
+    },
+    createNew() {
+      this.$router.push({
+        path: '/users/create',
+        query: {
+          redirect: '/users/list'
+        }
       })
     },
     resetSearch() {

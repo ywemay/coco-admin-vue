@@ -55,9 +55,9 @@ export const constantRoutes = [
     redirect: '/dashboard',
     children: [{
       path: 'dashboard',
-      name: $t('route.dashboard'),
+      name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: $t('route.dashboard'), icon: 'dashboard' }
+      meta: { title: $t('dashboard.title'), icon: 'dashboard' }
     }]
   },
   {
@@ -65,26 +65,82 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/sale/orders',
     name: 'Sales',
-    meta: { title: $t('route.sales'), icon: 'table' },
+    meta: { title: $t('saleorders.title'), icon: 'table' },
     children: [
-      {
-        path: 'create',
-        name: 'CreateSaleOrder',
-        component: () => import('@/views/saleorders/create'),
-        meta: { title: $t('route.order.create'), icon: 'form' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        name: 'EditSaleOrder',
-        component: () => import('@/views/saleorders/edit'),
-        meta: { title: $t('route.order.edit'), icon: 'form', activeMenu: '/sale/orders' },
-        hidden: true
-      },
       {
         path: 'orders',
         name: 'SaleOrderList',
         component: () => import('@/views/saleorders/list'),
-        meta: { title: $t('route.order.list'), icon: 'table' }
+        meta: { title: $t('saleorders.list'), icon: 'table' }
+      },
+      /*{
+        path: 'create',
+        name: 'CreateSaleOrder',
+        component: () => import('@/views/saleorders/create'),
+        meta: { title: $t('saleorders.create'), icon: 'form' }
+      },*/
+      {
+        path: 'edit/:id(\\d+)',
+        name: 'EditSaleOrder',
+        component: () => import('@/views/saleorders/edit'),
+        meta: { title: $t('saleorders.edit'), icon: 'form', activeMenu: '/sale/orders' },
+        hidden: true
+      }
+    ]
+  },
+  {
+    path: '/clorders',
+    component: Layout,
+    redirect: '/clorders/list',
+    name: 'ContainerLoadOrders',
+    meta: { title: $t('clorders.title'), icon: 'ctnrload' },
+    children: [
+      {
+        path: 'list',
+        name: 'CLOrders',
+        component: () => import('@/views/clorders/list'),
+        meta: { title: $t('clorders.list'), icon: 'ctnrload' }
+      },
+      {
+        path: 'edit/:id(\\d+)',
+        name: 'EditCLOrder',
+        component: () => import('@/views/clorders/edit'),
+        meta: { title: $t('clorders.edit'), icon: 'edit', activeMenu: '/clorders/list' },
+        hidden: true
+      }
+      /*{
+        path: 'create',
+        name: 'CreateCLOrder',
+        component: () => import('@/views/clorders/create'),
+        meta: { title: $t('clorders.create'), icon: 'form' }
+      }*/
+    ]
+  },
+  {
+    path: '/customerprofiles',
+    component: Layout,
+    redirect: '/customerprofiles/list',
+    name: 'CustomerProfiles',
+    meta: { title: $t('customerprofiles.title'), icon: 'tree' },
+    children: [
+      {
+        path: 'list',
+        name: 'CustomerProfileList',
+        component: () => import('@/views/customerprofiles/list'),
+        meta: { title: $t('customerprofiles.list'), icon: 'company' }
+      },
+      /*{
+        path: 'create',
+        name: 'CreateCustomerProfile',
+        component: () => import('@/views/customerprofiles/create'),
+        meta: { title: $t('route.customerprofile.create'), icon: 'form' }
+      },*/
+      {
+        path: 'edit/:id([\\d\+]+)',
+        name: 'EditCustomerProfile',
+        component: () => import('@/views/customerprofiles/edit'),
+        meta: { title: $t('customerprofiles.edit'), icon: 'edit', activeMenu: '/customerprofiles/list' },
+        hidden: true
       }
     ]
   },
@@ -93,88 +149,31 @@ export const constantRoutes = [
     component: Layout,
     redirect: '/users/list',
     name: 'Users',
-    meta: { title: $t('route.users'), icon: 'user' },
+    meta: { title: $t('users.title'), icon: 'user' },
     children: [
-      {
+      /*{
         path: 'create',
         name: 'CreateUser',
         component: () => import('@/views/user/create'),
         meta: { title: $t('route.user.create'), icon: 'form' }
+      },*/
+      {
+        path: 'list',
+        name: 'UsersList',
+        component: () => import('@/views/user/list'),
+        meta: { title: $t('users.list'), icon: 'user' }
       },
       {
         path: 'edit/:id([\\d\+]+)',
         name: 'EditUser',
         component: () => import('@/views/user/edit'),
-        meta: { title: $t('route.user.edit'), icon: 'edit', activeMenu: '/users/list' },
-        hidden: true
-      },
-      {
-        path: 'list',
-        name: 'UsersList',
-        component: () => import('@/views/user/list'),
-        meta: { title: $t('route.user.list'), icon: 'table' }
-      }
-    ]
-  },
-
-  {
-    path: '/customerprofiles',
-    component: Layout,
-    redirect: '/customerprofiles/list',
-    name: 'CustomerProfiles',
-    meta: { title: $t('route.customerprofiles'), icon: 'tree' },
-    children: [
-      {
-        path: 'list',
-        name: 'CustomerProfileList',
-        component: () => import('@/views/customerprofiles/list'),
-        meta: { title: $t('route.customerprofile.list'), icon: 'table' }
-      },
-      {
-        path: 'create',
-        name: 'CreateCustomerProfile',
-        component: () => import('@/views/customerprofiles/create'),
-        meta: { title: $t('route.customerprofile.create'), icon: 'form' }
-      },
-      {
-        path: 'edit/:id([\\d\+]+)',
-        name: 'EditCustomerProfile',
-        component: () => import('@/views/customerprofiles/edit'),
-        meta: { title: $t('route.customerprofile.edit'), icon: 'edit', activeMenu: '/customerprofiles/list' },
+        meta: { title: $t('users.edit'), icon: 'edit', activeMenu: '/users/list' },
         hidden: true
       }
     ]
   },
 
   // Container load orders
-  {
-    path: '/clorders',
-    component: Layout,
-    redirect: '/clorders/list',
-    name: 'ContainerLoadOrders',
-    meta: { title: $t('route.clorders'), icon: 'ctnrload' },
-    children: [
-      {
-        path: 'list',
-        name: 'CLOrders',
-        component: () => import('@/views/clorders/list'),
-        meta: { title: $t('route.clorder.list'), icon: 'ctnrload' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        name: 'EditCLOrder',
-        component: () => import('@/views/clorders/edit'),
-        meta: { title: $t('route.clorder.edit'), icon: 'edit', activeMenu: '/clorders/list' },
-        hidden: true
-      },
-      {
-        path: 'create',
-        name: 'CreateCLOrder',
-        component: () => import('@/views/clorders/create'),
-        meta: { title: $t('route.clorder.create'), icon: 'form' }
-      }
-    ]
-  },
 
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }

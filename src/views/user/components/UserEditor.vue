@@ -48,9 +48,19 @@
           <el-checkbox label="worker">{{ $t('user.worker') }}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <el-button v-loading="loading" type="success" @click="submitForm('postForm')">
-        {{ $t('button.save') }}
-      </el-button>
+      <el-button
+        v-loading="loading"
+        type="success"
+        :icon="'el-icon-' + (isEdit ? 'check' : 'plus')"
+        :title="$t('button.save')"
+        @click="submitForm('postForm')"
+      />
+      <el-button
+        v-if="redirect"
+        icon="el-icon-close"
+        :title="$t('button.close')"
+        @click="$router.push(redirect)"
+      />
     </el-form>
   </div>
 </template>
@@ -125,6 +135,7 @@ export default {
     return {
       postForm: Object.assign({}, defaultForm),
       loading: false,
+      redirect: false,
       rules: {
         username: [
           { required: true, message: this.$t('message.username.required'), trigger: 'blur' },
@@ -151,6 +162,9 @@ export default {
   },
   methods: {
     loadData() {
+      if (this.$route.query && this.$route.query.redirect) {
+        this.redirect = this.$route.query.redirect
+      }
       var uid = this.isEdit ? (this.userId ? this.userId : this.$route.params.id) : false
       if (!uid) return
       getUser(uid).then(response => {
@@ -177,6 +191,14 @@ export default {
           type: 'success',
           duration: 2000
         })
+        var destination = {
+          path: '/user/create',
+          query: { }
+        }
+        if (this.redirect) {
+          destination.query = { redirect: this.redirect }
+        }
+        this.$route.push(destination)
       } else {
         this.$notify({
           title: this.$t('message.save'),
@@ -202,7 +224,10 @@ export default {
           } else {
             createUser(this.postForm).then(response => {
               this.notifyResult(response)
-            }).catch(() => {
+            }).catch((error, response) => {
+              console.log('Error: ' + error)
+              console.log('Response???')
+              console.log(response)
               this.laoding = false
             })
           }

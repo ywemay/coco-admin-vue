@@ -1,6 +1,7 @@
 <template>
   <div class="items-actions">
     <el-progress v-if="items.length > 0" :percentage="percent" />
+    <el-button type="primary" icon="el-icon-document-add" @click="$emit('new')" />
     <template v-if="ids.length > 0">
       <el-button
         v-if="ids.length < 10"
@@ -9,7 +10,7 @@
         @click="$emit('edit', getIdsString())"
       />
       <el-button type="danger" icon="el-icon-delete" @click="deleteItems()" />
-      <el-button icon="el-icon-check" @click="$emit('select-all')" />
+      <!-- el-button icon="el-icon-check" @click="$emit('select-all')" / -->
       <el-badge :value="ids.length" class="item" type="primary">
         <el-button icon="el-icon-close" @click="$emit('cancel-selection')" />
       </el-badge>

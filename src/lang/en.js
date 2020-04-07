@@ -1,30 +1,74 @@
 export default {
-  route: {
-    dashboard: 'Dashboard',
-    sales: 'Sales',
-    order: {
-      create: 'Create Order',
-      edit: 'Edit Order',
-      list: 'Order List'
-    },
-    clorders: 'Container Load Orders',
-    clorder: {
-      list: 'Container Load Orders List',
-      edit: 'Edit Container Load Order',
-      create: 'Create Container Load Order'
-    },
-    users: 'Users',
-    user: {
-      create: 'Create User',
-      edit: 'Edit User',
-      list: 'User List'
-    },
-    customerprofiles: 'Customers',
-    customerprofile: {
-      create: 'Create Customer Profile',
-      edit: 'Edit Customer Profile',
-      list: 'Customer Profile List'
+  dashboard: {
+    title: 'Dashboard'
+  },
+  saleorders: {
+    title: 'Sale Orders',
+    list: 'Sale Order List',
+    create: 'Create Order',
+    edit: 'Edit Order'
+  },
+  order: {
+    startDateTime: 'Start Date Time',
+    date: 'Order Date',
+    containerType: 'Container Type',
+    customer: 'Customer',
+    price: 'Price',
+    description: 'Description',
+    descriptionDetails: 'Describe the content to be loaded to container. Average carton box size.',
+    state: 'State',
+    states: {
+      fresh: 'Fresh',
+      planned: 'Planned',
+      inprogress: 'In Progress',
+      done: 'Done',
+      canceled: 'Canceled'
     }
+  },
+  clorders: {
+    title: 'Container Load Order',
+    list: 'Container Load Orders',
+    edit: 'Edit Container Load Order',
+    create: 'Create Container Load Order'
+  },
+  clorder: {
+    assignedTo: 'Assigned to'
+  },
+  container: {
+    c20ft: '20FT Container',
+    hq: 'HQ Container',
+    other: 'Other'
+  },
+  customerprofiles: {
+    title: 'Customer Profiles',
+    create: 'Create Customer Profile',
+    edit: 'Edit Customer Profile',
+    list: 'Customer Profile List'
+  },
+  customerprofile: {
+    company: 'Company Name',
+    email: 'Email',
+    phone: 'Phone',
+    webpage: 'Webpage',
+    staff: 'Company staff'
+  },
+  users: {
+    title: 'Users',
+    create: 'Create User',
+    edit: 'Edit User',
+    list: 'User List'
+  },
+  user: {
+    username: 'User Name',
+    password: 'Password',
+    passwordRepeat: 'Repeat password',
+    roles: 'Roles',
+    admin: 'Administrator',
+    teamleader: 'Teamleader',
+    worker: 'Worker',
+    customer: 'Customer',
+    phone: 'Phone number',
+    enabled: 'Account Enabled'
   },
   button: {
     ok: 'OK',
@@ -83,50 +127,5 @@ export default {
     clorderlistempty: 'No container load orders found by given criteria',
     savefail: 'Failed to save',
     listempty: 'The list is empty'
-  },
-  order: {
-    startDateTime: 'Start Date Time',
-    date: 'Order Date',
-    containerType: 'Container Type',
-    customer: 'Customer',
-    price: 'Price',
-    description: 'Description',
-    descriptionDetails: 'Describe the content to be loaded to container. Average carton box size.',
-    state: 'State',
-    states: {
-      fresh: 'Fresh',
-      planned: 'Planned',
-      inprogress: 'In Progress',
-      done: 'Done',
-      canceled: 'Canceled'
-    }
-  },
-  clorder: {
-    assignedTo: 'Assigned to'
-  },
-  container: {
-    c20ft: '20FT Container',
-    hq: 'HQ Container',
-    other: 'Other'
-  },
-  user: {
-    // The following fields aer used in userforms:
-    username: 'User Name',
-    password: 'Password',
-    passwordRepeat: 'Repeat password',
-    roles: 'Roles',
-    admin: 'Administrator',
-    teamleader: 'Teamleader',
-    worker: 'Worker',
-    customer: 'Customer',
-    phone: 'Phone number',
-    enabled: 'Account Enabled'
-  },
-  customerprofile: {
-    company: 'Company Name',
-    email: 'Email',
-    phone: 'Phone',
-    webpage: 'Webpage',
-    staff: 'Company staff'
   }
 }
