@@ -73,14 +73,15 @@ export const constantRoutes = [
         component: () => import('@/views/saleorders/list'),
         meta: { title: $t('saleorders.list'), icon: 'table' }
       },
-      /*{
+      {
         path: 'create',
         name: 'CreateSaleOrder',
         component: () => import('@/views/saleorders/create'),
-        meta: { title: $t('saleorders.create'), icon: 'form' }
-      },*/
+        meta: { title: $t('saleorders.create'), icon: 'form' },
+        hidden: true
+      },
       {
-        path: 'edit/:id(\\d+)',
+        path: 'edit/:id([\\d\+]+)',
         name: 'EditSaleOrder',
         component: () => import('@/views/saleorders/edit'),
         meta: { title: $t('saleorders.edit'), icon: 'form', activeMenu: '/sale/orders' },
@@ -102,18 +103,19 @@ export const constantRoutes = [
         meta: { title: $t('clorders.list'), icon: 'ctnrload' }
       },
       {
-        path: 'edit/:id(\\d+)',
+        path: 'edit/:id([\\d\+]+)',
         name: 'EditCLOrder',
         component: () => import('@/views/clorders/edit'),
         meta: { title: $t('clorders.edit'), icon: 'edit', activeMenu: '/clorders/list' },
         hidden: true
-      }
-      /*{
+      },
+      {
         path: 'create',
         name: 'CreateCLOrder',
         component: () => import('@/views/clorders/create'),
-        meta: { title: $t('clorders.create'), icon: 'form' }
-      }*/
+        meta: { title: $t('clorders.create'), icon: 'form' },
+        hidden: true
+      }
     ]
   },
   {
@@ -129,12 +131,13 @@ export const constantRoutes = [
         component: () => import('@/views/customerprofiles/list'),
         meta: { title: $t('customerprofiles.list'), icon: 'company' }
       },
-      /*{
+      {
         path: 'create',
         name: 'CreateCustomerProfile',
         component: () => import('@/views/customerprofiles/create'),
-        meta: { title: $t('route.customerprofile.create'), icon: 'form' }
-      },*/
+        meta: { title: $t('customerprofiles.create'), icon: 'form' },
+        hidden: true
+      },
       {
         path: 'edit/:id([\\d\+]+)',
         name: 'EditCustomerProfile',
@@ -151,12 +154,13 @@ export const constantRoutes = [
     name: 'Users',
     meta: { title: $t('users.title'), icon: 'user' },
     children: [
-      /*{
+      {
         path: 'create',
         name: 'CreateUser',
         component: () => import('@/views/user/create'),
-        meta: { title: $t('route.user.create'), icon: 'form' }
-      },*/
+        meta: { title: $t('users.create'), icon: 'form' },
+        hidden: true
+      },
       {
         path: 'list',
         name: 'UsersList',

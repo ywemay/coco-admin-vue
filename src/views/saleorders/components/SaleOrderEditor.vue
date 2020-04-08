@@ -18,17 +18,17 @@
           />
         </el-col>
       </el-form-item>
-      <el-form-item :label="$t('order.customer')" prop="company">
+      <el-form-item :label="$t('order.customer')" prop="customer">
         <el-select
-          v-model="formPost.company"
+          v-model="formPost.customer"
           remote
           filterable
-          :remote-method="loadCompanies"
-          :loading="companyLoading"
-          @change="companySelect"
+          :remote-method="loadCustomerProfiles"
+          :loading="customerProfileLoading"
+          @change="customerProfileSelect"
         >
           <el-option
-            v-for="item in companies"
+            v-for="item in customerProfiles"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -91,13 +91,15 @@
       <el-button v-loading="formLoading" type="success" @click="submitForm('formPost')">
         {{ $t('button.save') }}
       </el-button>
+
+      <el-button @click="loadData()" icon="el-icon-plus" />
     </el-form>
   </div>
 </template>
 
 <script>
 import { getOrder, createOrder, updateOrder } from '@/api/saleorders'
-import { getList as getCompanies } from '@/api/company'
+import { getList as getCustomerProfiles } from '@/api/customerprofiles'
 import { getList as getUsers } from '@/api/user'
 import { formatDate, formatDateTime } from '@/utils/datetime'
 
@@ -106,7 +108,7 @@ dt.setHours(dt.getHours() + 3)
 
 const defaultForm = {
   date: Date(),
-  company: '',
+  customer: '',
   state: 0,
   containerType: 'HQ',
   startDateTime: dt,
@@ -121,6 +123,10 @@ export default {
     isEdit: {
       type: Boolean,
       default: false
+    },
+    itemId: {
+      type: Number,
+      default: 0
     }
   },
   data() {
@@ -132,21 +138,19 @@ export default {
           { required: true, type: 'regexp', pattern: /^\d\d\d\d\-\d\d\-\d\d*/,
             message: this.$t('message.validation.date'), trigger: 'blur' }
         ],
-        company: [
+        customer: [
           // { required: true, message: this.$t('message.validation.required'), trigger: 'blur' },
-          { required: true, pattern: /\/api\/companies\/\d+/,
-            message: this.$t('message.validation.company'), trigger: 'blur' }
+          { required: true, pattern: /\/api\/customer_profiles\/\d+/,
+            message: this.$t('message.validation.customer'), trigger: 'blur' }
         ]
       },
       saleOrderItems: [],
       links: [],
-      theId: this.$route.params.id,
       doneLoading: false,
-      companyLoading: false,
+      customerProfileLoading: false,
       teamLeadersLoading: false,
       formLoading: false,
-      customer: undefined,
-      companies: [],
+      customerProfiles: [],
       teamleaders: [],
       containerTypes: [
         { value: '20FT', label: this.$t('container.c20ft') },
@@ -167,34 +171,39 @@ export default {
   },
   methods: {
     loadData() {
-      if (this.isEdit) {
-        this.formLoading = true
-        getOrder(this.$route.params.id).then(response => {
-          if (response.status === 200) {
-            var data = response.data
-            this.formPost = data
-            this.mapCompanies([data.company])
-            this.formPost.company = data.company['@id']
-          } else {
-            console.log('Failed to load order')
-          }
-        }).then(() => {
+      var iid = this.isEdit ? (this.itemId ? this.itemId : this.$route.params.id) : false
+      if (!iid) return
+      // this.formLoading = true
+      getOrder(iid).then(response => {
+        if (response.status === 200) {
+          var data = response.data
+          console.log('Loaded order:')
+          console.log(data)
+          this.formPost = data
           this.formLoading = false
-        })
-      }
+          if (data.customer) {
+            this.mapCustomerProfiles([data.customer])
+          }
+          //this.formPost.customer = data.customer['@id']
+        } else {
+          console.log('Failed to load order')
+        }
+      }).then(() => {
+        this.formLoading = false
+      })
     },
-    loadCompanies(cname) {
+    loadCustomerProfiles(cname) {
       if (cname.length > 1) {
-        this.companyLoading = true
-        getCompanies({ name: cname }).then(response => {
+        this.customerProfileLoading = true
+        getCustomerProfiles({ company: cname }).then(response => {
           var data = response.data
           if (data['hydra:member']) {
-            this.mapCompanies(data['hydra:member'])
+            this.mapCustomerProfiles(data['hydra:member'])
           }
-          this.companyLoading = false
+          this.customerProfileLoading = false
         }).catch(error => {
-          this.companies = []
-          this.companyLoading = false
+          this.customerProfiles = []
+          this.customerProfileLoading = false
           console.log(error)
         })
       }
@@ -219,18 +228,18 @@ export default {
         })
       }
     },
-    companySelect(value) {
-      this.formPost.company = value
+    customerProfileSelect(value) {
+      this.formPost.customer = value
     },
     teamLeaderSelect(value) {
       this.formPost.teamleader = value
     },
-    mapCompanies(data) {
-      this.companies = data.map(val => {
+    mapCustomerProfiles(data) {
+      this.customerProfiles = data.map(val => {
         return {
           id: val['id'],
           value: val['@id'],
-          label: val['name']
+          label: val['company']
         }
       })
     },
@@ -243,8 +252,8 @@ export default {
         }
       })
     },
-    setCustomer: function(aUser) {
-      this.customer = aUser
+    setCustomer: function(aCustomerProfile) {
+      this.customerProfile = aCustomerProfile
     },
     notifyResult(response) {
       if (response.status === 201) {

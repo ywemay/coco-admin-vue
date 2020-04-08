@@ -76,6 +76,7 @@
 
 import { getList, deleteUser } from '@/api/user'
 import ListActions from '@/components/listActions'
+import { handleItemSelect } from '@/utils/lists'
 
 export default {
   name: 'UserList',
@@ -153,13 +154,7 @@ export default {
       this.fetchData()
     },
     selectUser(anId) {
-      if (this.selectedItems.indexOf(anId) === -1) {
-        this.selectedItems.push(anId)
-      } else {
-        this.selectedItems = this.selectedItems.filter(val => {
-          return val !== anId
-        })
-      }
+      this.selectedItems = handleItemSelect(this.selectedItems, anId)
     },
     compileClass(user) {
       var res = user.enabled ? 'enabled' : 'disabled'

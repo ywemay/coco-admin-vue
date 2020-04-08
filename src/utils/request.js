@@ -9,7 +9,7 @@ const service = axios.create({
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 25000, // request timeout
   validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 500;
+    return status >= 200 && status < 500
   }
 })
 
@@ -66,7 +66,7 @@ service.interceptors.response.use(
     }
 
     // if the custom code is not 20000, it is judged as an error.
-    if (response.status >= 400 && response.status < 600 ) {
+    if (response.status >= 400 && response.status < 600) {
       Message({
         message: response.data['hydra:description'] || 'Error',
         type: 'error',

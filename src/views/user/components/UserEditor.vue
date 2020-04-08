@@ -184,7 +184,7 @@ export default {
       })
     },
     notifyResult(response, rezCode = 201) {
-      if (response.status === rezCode ) {
+      if (response.status === rezCode) {
         this.$notify({
           title: this.$t('message.save'),
           message: this.$t('messages.save.success'),
